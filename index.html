@@ -14,6 +14,8 @@
   .hud{position:fixed;top:.8rem;left:0;right:0;text-align:center;z-index:6;pointer-events:none;opacity:0;transition:opacity .5s}
   .hud.on{opacity:1}
   .hud svg{width:104px;height:auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.25))}
+  #morph{position:fixed;top:15%;left:0;right:0;display:flex;justify-content:center;z-index:7;pointer-events:none}
+  #morph span{font:700 clamp(2.6rem,13vw,4.6rem) 'Fredoka',sans-serif;line-height:1;letter-spacing:-.04em;-webkit-text-stroke:6px #1B1B2F;paint-order:stroke;display:inline-block;will-change:transform,opacity}
   #ov{position:fixed;inset:0;z-index:5;pointer-events:none}
   .beat{position:absolute;width:min(91%,380px);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.96);border-radius:1.6rem;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:1.2rem 1.1rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .35s}
   .beat.on{pointer-events:auto}
@@ -96,6 +98,7 @@
   </svg>
 </div>
 
+<div id="morph"></div>
 <div id="ov"></div>
 <div class="scroll-hint" id="hint">⌄</div>
 
@@ -179,7 +182,7 @@ const STORES=`<div class="stores"><a class="btn store" href="https://apps.apple.
 const LAND=(t,m)=>`<div class="lwrap"><div class="ph" style="background-image:url('${IMG}land/${t}-tag.webp')"></div><div class="ph night" style="background-image:url('${IMG}land/${t}-nacht.webp')"></div></div><h2 style="font-size:1.2rem">${m}</h2>`;
 
 const BEATS=[
- {at:0.00,pos:'mid',html:`<div class="intrologo"><svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg"><text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text><text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text></svg></div><p class="sub">Routine für Kinder – Aufgaben mit Belohnung & Spaß</p>${STORES}<div class="weiter">So erlebt Ihr Kind die App – scroll los ⌄</div>`},
+ {at:0.00,pos:'mid',html:`<p class="sub" style="margin-top:.2rem">Routine für Kinder – Aufgaben mit Belohnung & Spaß</p>${STORES}<div class="weiter">So erlebt Ihr Kind die App – scroll los ⌄</div>`},
  {at:0.075,pos:'mid',html:`<h2>Jedes Kind sein Held</h2><p class="sub">33 gemalte Charaktere – eigene Farbe, eigenes Foto.</p><div class="chwrap"><div class="chrow2 r" id="chrowA"></div><div class="chrow2 l" id="chrowB"></div></div>`},
  {at:0.15,pos:'left',land:true,html:LAND('juni','Juni')+`<p class="sub">Tagsüber hell und freundlich, nachts mit schönem Sternenhimmel.</p>`},
  {at:0.225,pos:'right',land:true,html:LAND('dez','Dezember')+`<p class="sub">Jeden Monat eine neue Welt.</p>`},
@@ -209,6 +212,10 @@ function fillRoutine(boxId,tasks,winId){const box=document.getElementById(boxId)
 fillRoutine('rtMorgen',MORNING,'winMorgen');fillRoutine('rtAbend',EVENING,'winAbend');
 const CHARS=["unicorn","princess","Fee","mermaid","Drache","Schmetterling","hero","Roboter","ritter","pirat","ninja","samurai","aerztin","astronautin","pilot","polizist","feuerwehr","saengerin"];
 ['chrowA','chrowB'].forEach((id,ri)=>{const el=document.getElementById(id);const arr=CHARS.slice(ri*9,ri*9+9);const h=arr.map(c=>`<img src="${IMG}chars/${c}.webp" loading="lazy" alt="">`).join('');el.innerHTML=h+h;});
+// Logo-Buchstaben fuer die Morph-Animation (8 Buchstaben in 8 Logo-Farben -> 8 Linien)
+const LW='kidzlist',LC=['#FF3B30','#FF9500','#FFC72C','#2ECF6E','#2D7CF6','#5856D6','#AF52DE','#FF3D77'];
+const morph=document.getElementById('morph');morph.innerHTML=[...LW].map((ch,i)=>`<span style="color:${LC[i]}">${ch}</span>`).join('');
+const morphS=[...morph.children];
 
 // ===== Durchgehende Fahrt + Beats + Tag→Nacht + Spiele im Beat =====
 document.getElementById('scroller').style.height='2200vh';
@@ -228,12 +235,16 @@ function fromScroll(){const max=document.getElementById('scroller').offsetHeight
   for(const b of BEATS){if(!b.game)continue;
     if(b===bg&&bd<HALF&&!b.won){if(!b.live){b.live=true;b.clean=GAMES[b.game](b.el.querySelector('.gstage'),IMG+b.img+'.webp',b.el.querySelector('.gmsg'),b);}}
     else if(b.live){b.live=false;if(b.clean){b.clean();b.clean=null;}const gm=b.el.querySelector('.gmsg');if(gm)gm.textContent='';}}
-  document.getElementById('hud').classList.toggle('on',tgtT>0.05&&tgtT<0.95);
+  document.getElementById('hud').classList.toggle('on',tgtT>0.1&&tgtT<0.95);
   document.getElementById('hint').style.opacity=(tgtT<0.04)?'.55':'0';
 }
 addEventListener('scroll',fromScroll,{passive:true});
 let frame=0;
 function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.09;setCurveT(curT);
+  // Logo-Buchstaben fallen beim Losscrollen herab, strecken sich zu Linien und verblassen
+  const mp=Math.min(1,curT/0.09);
+  if(mp<1){morph.style.display='flex';morphS.forEach((s,i)=>{s.style.transform=`translateY(${mp*42}vh) translateX(${(i-3.5)*mp*9}px) scaleY(${1+mp*4.5}) scaleX(${1-mp*0.45})`;s.style.opacity=(1-mp*mp);});}
+  else if(morph.style.display!=='none')morph.style.display='none';
   const seg=Math.min(1,curT+0.022);for(const l of lanes)l.geometry.setDrawRange(0,Math.floor(laneMax*seg));  // 8 Linien wachsen nach vorne
   const tw=1+Math.sin(frame*0.07)*0.06;tip.scale.setScalar(tw);tip.position.y=2.4+Math.sin(frame*0.05)*0.18;
   // langsam Nacht werden bis zum Sternenfeld
