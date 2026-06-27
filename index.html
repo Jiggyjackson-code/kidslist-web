@@ -167,7 +167,9 @@ const BERG=[0x8fb98f,0x7aa97a,0xa7c7a7];
 const bergG=new THREE.Group();scene.add(bergG);   // Berge folgen der Kamera -> bleiben immer am Horizont
 for(let i=0;i<18;i++){const s=(i%2?1:-1),h=11+Math.random()*11;const m=new THREE.Mesh(new THREE.ConeGeometry(h*0.85,h,6),new THREE.MeshStandardMaterial({color:BERG[i%3],flatShading:true}));m.position.set(s*(28+Math.random()*13),h/2,-60+i*7);bergG.add(m);}
 const CLOUDS=[];
-function wolke(x,y,z,s){const g=new THREE.Group();[[0,0,0,1],[1,0.1,0,0.72],[-1,0.1,0,0.72],[0.5,0.45,0.2,0.6],[-0.4,0.4,-0.2,0.55]].forEach(c=>{const b=new THREE.Mesh(new THREE.SphereGeometry(c[3]*s,8,8),new THREE.MeshBasicMaterial({color:0xffffff}));b.position.set(c[0]*s,c[1]*s,c[2]*s);g.add(b);});g.position.set(x,y,z);g.userData.sp=0.005+Math.random()*0.006;scene.add(g);CLOUDS.push(g);}
+// Wolken-Kugel mit sanfter Schattierung (oben hell, unten leicht grau) -> Volumen, aber licht-unabhaengig (dunkelt bei Nacht nicht ab)
+function cloudGeo(r){const g=new THREE.SphereGeometry(r,10,9);const pos=g.attributes.position,col=[];for(let i=0;i<pos.count;i++){const ny=(pos.getY(i)/r+1)/2,sh=0.75+ny*0.25;col.push(sh,sh,Math.min(1,sh*1.02));}g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));return g;}
+function wolke(x,y,z,s){const g=new THREE.Group();[[0,0,0,1],[1,0.1,0,0.72],[-1,0.1,0,0.72],[0.5,0.45,0.2,0.6],[-0.4,0.4,-0.2,0.55]].forEach(c=>{const b=new THREE.Mesh(cloudGeo(c[3]*s),new THREE.MeshBasicMaterial({vertexColors:true}));b.position.set(c[0]*s,c[1]*s,c[2]*s);g.add(b);});g.position.set(x,y,z);g.userData.sp=0.005+Math.random()*0.006;scene.add(g);CLOUDS.push(g);}
 for(let i=0;i<14;i++){const c=curve.getPointAt(i/13);wolke(c.x+(Math.random()-0.5)*44,12+Math.random()*10,c.z-2,1.4+Math.random()*1.4);}
 const PETALS=[];
 for(let i=0;i<44;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(0.1,5,5),new THREE.MeshStandardMaterial({color:FLOWCOL[i%FLOWCOL.length]}));p.position.set((Math.random()-0.5)*60,1+Math.random()*9,-Math.random()*224);p.userData={sx:(Math.random()-0.5)*0.02,ph:Math.random()*6.28};scene.add(p);PETALS.push(p);}
@@ -191,7 +193,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(window
 // Wolke an der Spitze – zieht die Linien hinter sich her
 const tip=new THREE.Group();
 [[0,0,0,1.75],[2.1,0.1,0,1.3],[-2.1,0.1,0,1.3],[1.05,0.6,0.4,1.15],[-1.05,0.6,-0.4,1.15],[0,0.32,1.25,1.15],[0,0.36,-1.15,1.08],[3.3,0,0.1,0.92],[-3.3,0,-0.1,0.92]].forEach(c=>{
-  const b=new THREE.Mesh(new THREE.SphereGeometry(c[3],12,12),new THREE.MeshBasicMaterial({color:0xffffff}));
+  const b=new THREE.Mesh(cloudGeo(c[3]),new THREE.MeshBasicMaterial({vertexColors:true}));
   b.position.set(c[0],c[1],c[2]);tip.add(b);});
 scene.add(tip);
 const CAM_OFF=new THREE.Vector3(15,17,15);
