@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kidzlist – 3D-Fahrt (Konzept)</title>
+<style>
+  @font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url('fredoka.woff2') format('woff2')}
+  :root{--rosa:#FF3B30;--orange:#FF9500;--gelb:#FFC72C;--gruen:#2ECF6E;--blau:#2D7CF6;--indigo:#5856D6;--lila:#AF52DE;--pink:#FF3D77;--tinte:#1B1B2F}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Fredoka',system-ui,sans-serif;color:var(--tinte);background:#7ec8ff}
+  /* ===== Feste 3D-Bühne ===== */
+  #drive{position:fixed;inset:0;overflow:hidden}
+  .sky{position:absolute;left:0;right:0;top:0;height:52%;background:linear-gradient(180deg,#5bb8ff 0%,#9fd8ff 60%,#d4f0ff 100%)}
+  .sun{position:absolute;top:8%;left:50%;width:90px;height:90px;margin-left:-45px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#fff4b8,#ffd23f);box-shadow:0 0 70px #ffd23fcc;transition:transform .2s}
+  .hills{position:absolute;left:-10%;right:-10%;top:38%;height:18%;background:
+     radial-gradient(50% 120% at 18% 100%,#8fcf72 0 99%,transparent),
+     radial-gradient(60% 140% at 50% 100%,#7ec463 0 99%,transparent),
+     radial-gradient(55% 120% at 84% 100%,#8fcf72 0 99%,transparent);background-repeat:no-repeat}
+  /* perspektivischer Boden */
+  .stage{position:absolute;left:0;right:0;top:50%;bottom:0;perspective:300px;perspective-origin:50% 0%;overflow:hidden}
+  .floor{position:absolute;left:50%;top:0;width:360%;height:560px;margin-left:-180%;transform-origin:top center;transform:rotateX(74deg);
+    background-color:#83cf7c;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.0) 0 78px, rgba(255,255,255,.10) 78px 80px),
+      repeating-linear-gradient(90deg, #7bc775 0 90px, #88d382 90px 180px);
+    background-position:0 0,0 0}
+  /* Straße in der Mitte (Trapez durch Perspektive automatisch) */
+  .road{position:absolute;left:50%;top:0;width:34%;height:560px;margin-left:-17%;transform-origin:top center;transform:rotateX(74deg);
+    background:linear-gradient(90deg,#c8a262,#e9cf95 12%,#f2dca8 50%,#e9cf95 88%,#c8a262);
+    box-shadow:0 0 60px 10px #ffd23f55}
+  .road::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:8px;margin-left:-4px;
+    background:repeating-linear-gradient(0deg,#fff 0 40px,transparent 40px 90px);filter:drop-shadow(0 0 6px #FFD23F)}
+  /* Glühende Straßenränder */
+  .road::after{content:"";position:absolute;inset:0;border-left:4px solid #FFD23F;border-right:4px solid #FFD23F;filter:blur(2px) drop-shadow(0 0 8px #FFD23F);opacity:.8}
+
+  /* Auto vorne (Heckansicht – wir fahren hinterher) */
+  .car{position:absolute;left:50%;bottom:6%;width:160px;margin-left:-80px;z-index:8;transition:transform .15s ease-out}
+  .car svg{width:100%;height:auto;filter:drop-shadow(0 12px 12px rgba(0,0,0,.3));animation:bob 1s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+  /* Popups (kommen aus der Tiefe) */
+  #popups{position:absolute;inset:0;z-index:7;pointer-events:none}
+  .pop{position:absolute;left:50%;top:46%;width:230px;margin-left:-115px;background:rgba(255,255,255,.96);border-radius:1.3rem;box-shadow:0 18px 50px rgba(0,0,0,.28);padding:1rem 1.1rem;text-align:center;opacity:0;transform:translate(-0%, -50%) scale(.2);transform-origin:center}
+  .pop .ic{width:3.4rem;height:3.4rem;margin:0 auto .4rem;display:grid;place-items:center;font-size:2.2rem}
+  .pop .ic img{width:3.4rem;height:3.4rem;object-fit:contain}
+  .pop h3{font-size:1.15rem;margin-bottom:.2rem}
+  .pop p{font-size:.9rem;opacity:.75}
+
+  /* HUD oben */
+  .hud{position:absolute;top:1rem;left:0;right:0;text-align:center;z-index:9;pointer-events:none}
+  .hud svg{width:170px;height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+  .lang{position:fixed;top:1rem;right:1rem;z-index:30;display:flex;gap:.25rem;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);padding:.3rem;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+  .lang button{border:none;background:none;font-family:inherit;font-weight:600;font-size:.82rem;padding:.32rem .6rem;border-radius:999px;cursor:pointer;color:var(--tinte);opacity:.5}
+  .lang button.on{background:var(--indigo);color:#fff;opacity:1}
+  /* Intro + Ende als Overlays */
+  .overlay{position:fixed;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;pointer-events:none;transition:opacity .5s}
+  .scroll-hint{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%);font-size:1.7rem;opacity:.6;z-index:26;animation:bob2 1.5s infinite}
+  @keyframes bob2{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,9px)}}
+  .badge{display:inline-block;background:var(--gelb);color:var(--tinte);font-weight:700;font-size:.82rem;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:999px;padding:.85rem 1.5rem;font-family:inherit;font-size:1rem;font-weight:600;color:#fff;background:var(--tinte);text-decoration:none;margin:.3rem}
+  #driver{height:760vh}
+  .brandlogo{width:min(72%,320px);height:auto}
+</style>
+</head>
+<body>
+
+<nav class="lang"><button data-lang="de" class="on">DE</button><button data-lang="en">EN</button><button data-lang="el">ΕΛ</button></nav>
+
+<div id="drive">
+  <div class="sky"></div>
+  <div class="sun" id="sun"></div>
+  <div class="hills"></div>
+  <div class="stage">
+    <div class="floor" id="floor"></div>
+    <div class="road" id="road"></div>
+  </div>
+  <div id="popups"></div>
+  <div class="car" id="car">
+    <svg viewBox="0 0 200 170" aria-hidden="true">
+      <rect x="8" y="74" width="36" height="78" rx="15" fill="#1B1B2F"/><rect x="156" y="74" width="36" height="78" rx="15" fill="#1B1B2F"/>
+      <rect x="24" y="36" width="152" height="104" rx="24" fill="#FF3B30" stroke="#1B1B2F" stroke-width="5"/>
+      <rect x="50" y="46" width="100" height="46" rx="13" fill="#4DA6FF" stroke="#1B1B2F" stroke-width="4"/>
+      <rect x="33" y="104" width="30" height="20" rx="7" fill="#FFC72C"/><rect x="137" y="104" width="30" height="20" rx="7" fill="#FFC72C"/>
+    </svg>
+  </div>
+  <div class="hud" id="hud"></div>
+</div>
+
+<div class="overlay" id="intro">
+  <svg class="brandlogo" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
+    <defs><style>.kdzwm{font-family:'Fredoka',sans-serif;font-weight:700;font-size:230px;letter-spacing:-14px;paint-order:stroke fill;stroke:#1B1B2F;stroke-width:10;stroke-linejoin:round}</style></defs>
+    <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
+    <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
+  </svg>
+  <p style="font-weight:600;font-size:1.2rem;margin-top:1rem" data-i="claim">Steig ein – wir fahren durch Kidzlist.</p>
+</div>
+
+<div class="overlay" id="outro" style="opacity:0">
+  <span class="badge" data-i="badge">Bald verfügbar</span>
+  <svg class="brandlogo" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:.6rem">
+    <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
+    <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
+  </svg>
+  <p style="opacity:.8" data-i="cta_l">Kostenlos. Ohne Werbung, ohne Tracking.</p>
+  <div style="margin-top:1rem;pointer-events:auto"><a class="btn" href="https://apps.apple.com/app/id6780948441" target="_blank">App Store</a><a class="btn" href="#" onclick="return false">Google Play</a></div>
+</div>
+
+<div class="scroll-hint" id="hint">⌄</div>
+<div id="driver"></div>
+
+<script>
+const IMG="assets/img/";
+const STATIONS=[
+ {img:IMG+"tasks/1f9b7.webp", t:0.12},
+ {img:IMG+"logos/2b50.webp", t:0.28},
+ {img:IMG+"puzzle/maerchen/01.webp", t:0.44, big:true},
+ {img:IMG+"chars/unicorn.webp", t:0.60},
+ {img:IMG+"tasks/1f4d6.webp", t:0.74},
+];
+const I18N={
+ de:{claim:"Steig ein – wir fahren durch Kidzlist.",badge:"Bald verfügbar",cta_l:"Kostenlos. Ohne Werbung, ohne Tracking.",
+   pops:[["Morgen & Abend","Routine selbst abhaken"],["Sammeln","Logos & Belohnungen"],["Vier Spiele","Puzzle, Kratzen, Fangen"],["33 Charaktere","Jedes Kind sein Held"],["Tagesplaner","Für besondere Tage"]]},
+ en:{claim:"Hop in – let's drive through Kidzlist.",badge:"Coming soon",cta_l:"Free. No ads, no tracking.",
+   pops:[["Morning & evening","Tick off the routine"],["Collect","Logos & rewards"],["Four games","Puzzle, scratch, catch"],["33 characters","Every child a hero"],["Day planner","For special days"]]},
+ el:{claim:"Ανέβα – οδηγούμε μέσα στο Kidzlist.",badge:"Σύντομα διαθέσιμο",cta_l:"Δωρεάν. Χωρίς διαφημίσεις.",
+   pops:[["Πρωί & βράδυ","Τσεκάρισμα ρουτίνας"],["Συλλογή","Λογότυπα & δώρα"],["Τέσσερα παιχνίδια","Παζλ, ξύσιμο, πιάσιμο"],["33 χαρακτήρες","Κάθε παιδί ήρωας"],["Πρόγραμμα","Για ξεχωριστές μέρες"]]}
+};
+let LANG="de";
+function build(){
+  const t=I18N[LANG];document.documentElement.lang=LANG;
+  document.querySelectorAll("[data-i]").forEach(e=>{const k=e.getAttribute("data-i");if(t[k])e.textContent=t[k];});
+  const pw=document.getElementById("popups");pw.innerHTML="";
+  STATIONS.forEach((s,i)=>{const d=document.createElement("div");d.className="pop";d.dataset.i=i;
+    d.innerHTML=`<div class="ic"><img src="${s.img}" alt=""></div><h3>${t.pops[i][0]}</h3><p>${t.pops[i][1]}</p>`;pw.appendChild(d);});
+}
+// Fahrt: Scroll -> Vorwärtsbewegung (Boden-Textur), Kurven (perspective-origin + Straße), Popups aus der Tiefe
+let ticking=false;
+function drive(){if(ticking)return;ticking=true;requestAnimationFrame(()=>{
+  const max=document.getElementById("driver").offsetHeight-innerHeight;
+  const t=Math.max(0,Math.min(1,scrollY/max));
+  // Vorwärts: Boden-Querlinien scrollen (Geschwindigkeit), Straßen-Mittellinie auch
+  const speed=t*4200;
+  document.getElementById("floor").style.backgroundPosition=`0 ${speed}px, 0 0`;
+  const road=document.getElementById("road");
+  road.querySelector?road.querySelector(''):0;
+  document.getElementById("road").style.setProperty('--rs',speed+'px');
+  // Kurven: sanfte Links/Rechts-Schwankung -> perspective-origin verschieben + Auto neigen
+  const curve=Math.sin(t*Math.PI*5)*1; // -1..1
+  document.querySelector(".stage").style.perspectiveOrigin=(50+curve*16)+"% 0%";
+  document.getElementById("car").style.transform=`translateX(${curve*40}px) rotate(${curve*7}deg)`;
+  document.getElementById("sun").style.transform=`translateX(${-curve*30}px)`;
+  // Popups: nähern sich aus der Tiefe, wenn t den Stations-t passiert
+  STATIONS.forEach((s,i)=>{const el=document.querySelector('.pop[data-i="'+i+'"]');
+    const d=t-s.t;            // -0.12 (fern) .. 0 (da) .. + (vorbei)
+    const win=0.12;
+    if(d<-win||d>win*0.6){el.style.opacity=0;return;}
+    let prog=(d+win)/(win*1.6);     // 0..1 Annäherung
+    const sc=0.15+prog*1.25;        // klein -> groß
+    const yy=46 - prog*30;          // von oben (Horizont) nach unten
+    el.style.opacity=Math.min(1,prog*2.2)*(d>win*0.3?Math.max(0,1-(d-win*0.3)/(win*0.3)):1);
+    el.style.top=yy+"%";
+    el.style.transform=`translate(-50%,-50%) scale(${sc.toFixed(2)})`;
+    el.style.left=(50+curve*10)+"%";
+  });
+  // Intro/Outro ein-/ausblenden
+  document.getElementById("intro").style.opacity=String(Math.max(0,1-t*9));
+  document.getElementById("outro").style.opacity=String(Math.max(0,(t-0.9)/0.1));
+  document.getElementById("hint").style.opacity=String(Math.max(0,1-t*9)*0.6);
+  ticking=false;});}
+addEventListener("scroll",drive,{passive:true});
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;document.querySelectorAll(".lang button").forEach(x=>x.classList.toggle("on",x===b));build();});
+// Straßen-Mittellinien-Scroll via CSS-Variable nutzbar machen
+const st=document.createElement('style');st.textContent='.road::before{background-position-y:var(--rs,0)}';document.head.appendChild(st);
+build();drive();
+</script>
+</body>
+</html>
