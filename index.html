@@ -18,7 +18,8 @@
   #lang button{border:none;background:rgba(255,255,255,.82);color:#1B1B2F;font:700 .78rem 'Fredoka',sans-serif;padding:.3rem .5rem;border-radius:.55rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15)}
   #lang button.on{background:var(--indigo);color:#fff}
   #prog{position:fixed;top:0;left:0;height:4px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77);z-index:9;transition:transform .12s linear}
-  #snd{position:fixed;top:.7rem;left:.7rem;z-index:8;border:none;background:rgba(255,255,255,.82);font-size:1rem;width:2rem;height:2rem;border-radius:.55rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);line-height:1;padding:0}
+  #snd{position:fixed;top:.7rem;left:.7rem;z-index:8;border:none;background:rgba(255,255,255,.82);font-size:1rem;width:2.1rem;height:2.1rem;border-radius:.55rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);line-height:1;padding:0;display:grid;place-items:center}
+  #snd img{width:1.4rem;height:1.4rem;object-fit:contain;display:block}
   #cta{position:fixed;bottom:1.1rem;right:.9rem;z-index:8;background:var(--indigo);color:#fff;padding:.55rem 1.05rem;border-radius:999px;font-weight:700;font-size:.88rem;text-decoration:none;box-shadow:0 6px 16px rgba(88,86,214,.45);opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;pointer-events:none}
   #cta.on{opacity:1;transform:none;pointer-events:auto}
   #ov{position:fixed;inset:0;z-index:5;pointer-events:none}
@@ -31,7 +32,6 @@
   .pos-right{left:auto;right:5%;transform:none;bottom:9vh;width:min(82%,300px)}
   .beat h2{font-size:1.4rem;margin-bottom:.25rem;line-height:1.1}
   .beat p.sub{font-size:.94rem;opacity:.78;margin-bottom:.2rem;line-height:1.34}
-  #b5 .sub{font-size:.74rem;white-space:nowrap}
   .weiter{margin-top:.85rem;font-size:.82rem;opacity:.55;font-weight:600}
   .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:999px;padding:.72rem 1.4rem;font-family:inherit;font-size:1rem;font-weight:700;color:#fff;background:var(--indigo);cursor:pointer;box-shadow:0 8px 20px rgba(88,86,214,.35);text-decoration:none}
   .btn.store{background:var(--tinte);font-size:.93rem;padding:.66rem 1.1rem}
@@ -100,6 +100,7 @@
   .beat.on .cgrid .cpanel:nth-child(3){animation-delay:.24s}
   .beat.on .cgrid .cpanel:nth-child(4){animation-delay:.36s}
   .study .bignum{font-size:4rem;font-weight:800;background:linear-gradient(90deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05}
+  .study .studyimg{width:4.6rem;height:4.6rem;margin:0 auto .25rem;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}
   .study .ssrc{font-size:.66rem;opacity:.5;margin-top:.6rem}
   .jp-piece{display:inline-block;line-height:0;touch-action:none}
   .scroll-hint{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:1.6rem;opacity:.55;z-index:6;animation:bb 1.5s infinite;pointer-events:none;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.3)}
@@ -121,22 +122,135 @@
   #wave .sfair{font-size:1.35rem;font-weight:700;color:var(--tinte);margin-top:.25rem}
   #wave .sub2{font-size:.95rem;opacity:.8;margin:.5rem 0 .2rem}
   #wave .dslink{opacity:.6}
+  #wave .bald{display:inline-block;background:var(--gelb);color:var(--tinte);font-size:.86rem;font-weight:700;padding:.35rem 1rem;border-radius:999px;letter-spacing:0;text-transform:none;margin-bottom:1rem}
+  /* ===== Umbau 2026-06-28 ===== */
+  /* Kopf: Logo groesser + Untertitel + App-holen, ganzer Block klickbar */
+  .hud{top:.55rem}
+  .hudblock{display:inline-flex;flex-direction:column;align-items:center;gap:.05rem;pointer-events:auto;text-decoration:none;background:rgba(255,255,255,.55);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border-radius:1.1rem;padding:.4rem 1.05rem .5rem;box-shadow:0 5px 16px rgba(0,0,0,.13)}
+  .hud svg{width:144px;height:auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.25))}
+  .hudsub{font-size:.71rem;font-weight:600;color:var(--tinte);opacity:.82;margin-top:-.1rem;line-height:1.1}
+  .hudcta{font-size:.74rem;font-weight:800;color:#fff;background:var(--indigo);padding:.24rem .9rem;border-radius:999px;box-shadow:0 3px 10px rgba(88,86,214,.4);margin-top:.22rem}
+  .hudblock:active{transform:scale(.97)}
+  /* Landschafts-Sequenz */
+  .lseq{position:relative;height:300px;aspect-ratio:500/1082;margin:.2rem auto .5rem;border-radius:1.1rem;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.25);border:5px solid #1B1B2F}
+  .lsphoto{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease}
+  .lsphoto.on{opacity:1}
+  .lscap{font-weight:700;font-size:1.02rem;min-height:1.35rem;opacity:0;transform:translateY(10px)}
+  .lscap.in{animation:lcapin .6s cubic-bezier(.2,1,.3,1) forwards}
+  @keyframes lcapin{to{opacity:1;transform:none}}
+  /* Routine-Demo */
+  .rtblock{transition:opacity .5s,filter .5s}
+  .rtblock+.rtblock{margin-top:.65rem;padding-top:.55rem;border-top:1.5px solid #eee}
+  .rtblock.dimmed{opacity:.42;filter:grayscale(.7)}
+  .rth{font-size:1.12rem;margin-bottom:.05rem}
+  .rtsub{font-size:.78rem;margin-bottom:.4rem;opacity:.75}
+  .rt4{grid-template-columns:repeat(4,1fr);gap:.3rem}
+  .rt4 .t{padding:.4rem .12rem}
+  .rt4 .t img{width:2.2rem;height:2.2rem}
+  .rt4 .t .l{font-size:.52rem}
+  /* Spiele 2x2 mit Vorspiel */
+  .g4grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:.55rem 0 .35rem}
+  .g4tile{position:relative;cursor:pointer;border-radius:.9rem;overflow:hidden;border:3px solid #1B1B2F;box-shadow:0 4px 12px rgba(0,0,0,.18);background:#dfe3ec}
+  .g4stage{position:relative;width:100%;aspect-ratio:1;filter:grayscale(1) brightness(.72);transition:filter .5s}
+  .g4tile.solving .g4stage,.g4tile.solved .g4stage{filter:none}   /* Farbe kommt SOFORT beim Animationsstart (Gerit 2026-06-28) */
+  .g4pic{position:absolute;inset:0;background-size:cover;background-position:center}
+  .g4lbl{position:absolute;left:0;right:0;bottom:0;background:rgba(27,27,47,.74);color:#fff;font-weight:700;font-size:.76rem;padding:.18rem;text-align:center}
+  .g4check{position:absolute;top:.3rem;right:.3rem;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--gruen);color:#fff;display:grid;place-items:center;font-size:.9rem;transform:scale(0);transition:transform .35s cubic-bezier(.2,1.6,.4,1);z-index:4}
+  .g4tile.solved .g4check{transform:scale(1)}
+  .g4hint{font-size:.78rem;opacity:.6;font-weight:600;margin-top:.15rem}
+  /* TAUSCHEN: echtes 2x2-Puzzle; zwei diagonale Teile starten vertauscht und tauschen zurueck */
+  .g4swap{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;background:#1B1B2F}
+  .g4q{background-size:200% 200%}
+  .g4q.q0{background-position:0 0}.g4q.q1{background-position:100% 0}.g4q.q2{background-position:0 100%}.g4q.q3{background-position:100% 100%}
+  .g4-swap .q0{transform:translate(calc(100% + 3px),calc(100% + 3px))}   /* startet auf Platz von q3 */
+  .g4-swap .q3{transform:translate(calc(-100% - 3px),calc(-100% - 3px))}  /* startet auf Platz von q0 */
+  .g4tile.solving.g4-swap .q0,.g4tile.solving.g4-swap .q3{animation:g4unswap 1.4s cubic-bezier(.5,0,.3,1) .15s forwards}
+  .g4tile.solved.g4-swap .q0,.g4tile.solved.g4-swap .q3{transform:none}
+  @keyframes g4unswap{to{transform:none}}
+  /* EINSETZEN: ein Jigsaw-Teil fliegt ins leere Feld */
+  .g4-insert .g4hole{position:absolute;width:42%;height:42%;left:29%;top:29%;background:rgba(0,0,0,.4);border:2px dashed #fff;border-radius:.4rem;transition:opacity .3s}
+  .g4-insert .g4piece{position:absolute;width:42%;height:42%;left:29%;top:29%;background-size:238% 238%;background-position:center;border-radius:.4rem;box-shadow:0 3px 8px rgba(0,0,0,.45);transform:translate(78%,-78%) rotate(14deg);opacity:0}
+  .g4tile.solving.g4-insert .g4piece{animation:g4insfly 1.4s ease-in-out .15s forwards}
+  .g4tile.solved.g4-insert .g4piece{transform:none;opacity:1}
+  .g4tile.solved.g4-insert .g4hole{opacity:0}
+  @keyframes g4insfly{0%{transform:translate(78%,-78%) rotate(14deg);opacity:0}35%{opacity:1}100%{transform:none;opacity:1}}
+  /* FREIKRATZEN: unsere lila Kratzschicht wird weggewischt */
+  .g4-scratch .g4cover{position:absolute;inset:0;background:repeating-linear-gradient(50deg,#caa6e0,#caa6e0 10px,#b98fd6 10px,#b98fd6 20px)}
+  .g4tile.solving.g4-scratch .g4cover{animation:g4scr 1.4s ease-in-out .15s forwards}
+  .g4tile.solved.g4-scratch .g4cover{clip-path:inset(0 0 0 100%)}
+  @keyframes g4scr{to{clip-path:inset(0 0 0 100%)}}
+  /* AUFFANGEN: ein Logo faellt von oben in den Korb */
+  .g4-catch .g4sky{background:linear-gradient(#bfe6ff,#dff3e0)}
+  .g4-catch .g4drop{position:absolute;left:39%;top:-30%;width:22%;height:auto;z-index:2}
+  .g4tile.solving.g4-catch .g4drop{animation:g4fall 1.4s ease-in .15s forwards}
+  .g4tile.solved.g4-catch .g4drop{top:53%}
+  @keyframes g4fall{0%{top:-30%}82%,100%{top:53%}}
+  .g4-catch .g4basket{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);font-size:1.9rem;z-index:3}
+  /* Feature-Leiste (Variante C): Kaertchen ziehen automatisch durch */
+  .fstrip{overflow:hidden;margin-top:.7rem;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+  .frow{display:flex;gap:.55rem;width:max-content;animation:fmarch 20s linear infinite}
+  .fcard{flex:0 0 8.6rem;background:#f7f6fc;border-radius:1.1rem;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:.85rem .55rem;text-align:center}
+  .fcard .fic{width:2.6rem;height:2.6rem;margin:0 auto .35rem;display:grid;place-items:center}
+  .fcard .fic img{width:2.4rem;height:2.4rem;object-fit:contain}
+  .fcard h3{font-size:.95rem;margin-bottom:.18rem}
+  .fcard p{font-size:.74rem;opacity:.74;line-height:1.28}
+  @keyframes fmarch{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  /* ===== Comic im Last-War-Format: grosse Seite, gemischte Panels, Aufbau + Ken-Burns ===== */
+  .beat.clast{width:min(94%,410px);padding:.7rem .7rem .85rem;bottom:3.5vh}
+  .clpage{display:flex;flex-direction:column}
+  .clband{font-family:'Fredoka',sans-serif;font-weight:700;font-style:italic;text-align:center;line-height:1.2;background:var(--gelb);border:2.5px solid var(--tinte);border-radius:.7rem;padding:.4rem .6rem;font-size:1rem;box-shadow:0 3px 0 var(--tinte)}
+  .clband.bot{margin-top:.5rem;background:#fff;font-size:.92rem}
+  .clgrid{display:grid;gap:.4rem;grid-template-columns:1fr 1fr;grid-template-rows:1.1fr 1fr 1.1fr;grid-template-areas:"a a" "b c" "d d";height:56vh;margin-top:.5rem}
+  .clpanel.area-a{grid-area:a}.clpanel.area-b{grid-area:b}.clpanel.area-c{grid-area:c}.clpanel.area-d{grid-area:d}
+  .clpanel{position:relative;border:2.5px solid var(--tinte);border-radius:.6rem;overflow:hidden;display:grid;place-items:center;min-height:0;opacity:0;transform:scale(.84) rotate(-2deg) translateY(12px)}
+  .beat.on .clpanel{animation:clpop .55s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(var(--i) * .35s)}
+  .clpic{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0}
+  .beat.on .clpic{animation:clkb 7s ease-out forwards;animation-delay:calc((var(--i) * .35 + .55) * 1s)}
+  .clpanel.morn{background:linear-gradient(165deg,#a9d6ff,#ffe9b8)}
+  .clpanel.night{background:linear-gradient(165deg,#3a4c84,#6c7fb8)}
+  .clph{position:relative;z-index:1;font-size:2.7rem;filter:drop-shadow(0 3px 2px rgba(0,0,0,.18));opacity:.92}
+  .clbub{position:absolute;z-index:2;max-width:82%;font-weight:800;font-size:.76rem;line-height:1.12;background:#fff;color:var(--tinte);border:2px solid var(--tinte);border-radius:.55rem;padding:.24rem .42rem;box-shadow:0 2px 0 rgba(27,27,47,.5);opacity:0;transform:scale(.6)}
+  .beat.on .clbub{animation:clbub .42s cubic-bezier(.2,1.7,.4,1) forwards;animation-delay:calc((var(--i) * .35 + .5) * 1s)}
+  .clbub.tl{top:.3rem;left:.3rem}
+  .clbub.br{right:.3rem;bottom:.3rem;background:var(--gelb)}
+  .clbub.shout{background:var(--rosa);color:#fff;border-color:#a82018}
+  @keyframes clpop{60%{opacity:1}to{opacity:1;transform:none}}
+  @keyframes clkb{to{transform:scale(1.08)}}
+  @keyframes clbub{to{opacity:1;transform:none}}
+  /* Sicher & Fair -- urspruengliche Farben (Verlauf indigo->pink, weisse Pillen) */
+  .safebox{background:linear-gradient(135deg,var(--indigo),var(--pink));color:#fff;border-radius:1.2rem;padding:1.3rem 1.1rem;margin:-.2rem -.1rem .1rem}
+  .safebox h2{font-size:1.45rem;color:#fff}
+  .safebox .sub{color:#fff;opacity:.95}
+  .safegrid{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin-top:.7rem}
+  .safegrid div{background:rgba(255,255,255,.2);color:#fff;border-radius:999px;padding:.4rem .85rem;font-weight:600;font-size:.84rem}
+  /* Spiel-Vollbild-Overlay */
+  #gameModal{position:fixed;inset:0;z-index:30;background:rgba(27,27,47,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;place-items:center;padding:1rem}
+  #gameModal.on{display:grid}
+  .gmcard{position:relative;background:#fff;border-radius:1.4rem;padding:1.4rem 1.1rem 1.2rem;max-width:360px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.4);text-align:center}
+  .gmclose{position:absolute;top:.55rem;right:.55rem;border:none;background:#f4f6fb;width:2rem;height:2rem;border-radius:50%;font-size:.95rem;cursor:pointer;color:var(--tinte)}
+  .gmtitle{font-size:1.3rem;margin-bottom:.6rem}
+  .gmstage{width:min(100%,260px);margin:0 auto}
+  .gmmsg{min-height:1.3rem;font-weight:700;color:var(--gruen);margin-top:.4rem}
 </style>
 </head>
 <body>
 <div id="c"></div>
-<button id="snd" aria-label="Sound">🔇</button>
+<button id="snd" aria-label="Sound"><img src="assets/img/ui/lautsprecher_aus.webp" alt=""></button>
 <audio id="bgm" src="audio/musik.mp3" loop preload="none"></audio>
 <div id="lang"><button data-l="de">DE</button><button data-l="en">EN</button><button data-l="gr">GR</button></div>
 <div id="prog"></div>
 <a id="cta" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App holen</a>
 
 <div class="hud" id="hud">
-  <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
-    <defs><style>.kdzwm{font-family:'Fredoka',sans-serif;font-weight:700;font-size:230px;letter-spacing:-14px;paint-order:stroke fill;stroke:#1B1B2F;stroke-width:10;stroke-linejoin:round}</style></defs>
-    <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
-    <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
-  </svg>
+  <a class="hudblock" id="hudlink" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener" aria-label="kidzlist – App holen">
+    <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
+      <defs><style>.kdzwm{font-family:'Fredoka',sans-serif;font-weight:700;font-size:230px;letter-spacing:-14px;paint-order:stroke fill;stroke:#1B1B2F;stroke-width:10;stroke-linejoin:round}</style></defs>
+      <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
+      <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
+    </svg>
+    <div class="hudsub" id="hudsub"></div>
+    <div class="hudcta" id="hudcta">App holen</div>
+  </a>
 </div>
 
 <div id="ov"></div>
@@ -150,13 +264,20 @@
       <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
     </svg>
   </div>
-  <div class="sfair" id="wsfair">Sicher & Fair</div>
-  <div class="sub2" id="wsub2">Für Eltern und Kinder gebaut.<br>Ohne Werbung, ohne Tracking.</div>
+  <div class="sub2" id="wzielp">Kostenlos. Ohne Werbung, ohne Tracking.</div>
   <div class="stores">
     <a class="btn store" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App Store</a>
     <a class="btn store" href="#" onclick="return false">Google Play</a>
   </div>
   <a class="dslink" id="wds" href="https://jiggyjackson-code.github.io/kidzlist-recht/" target="_blank" rel="noopener">Datenschutz & Nutzungsbedingungen</a>
+</div></div>
+
+<!-- Vollbild-Overlay fuer ein echtes Spiel (Klick auf eine 2x2-Kachel) -->
+<div id="gameModal"><div class="gmcard">
+  <button class="gmclose" onclick="closeGame()" aria-label="Schliessen">✕</button>
+  <h2 class="gmtitle"></h2>
+  <div class="gmstage"></div>
+  <div class="gmmsg"></div>
 </div></div>
 
 <div id="scroller"></div>
@@ -249,46 +370,138 @@ const T={
  gr:{intro_sub:"Ρουτίνα για παιδιά – δουλειές με επιβράβευση & κέφι",intro_w:"Δείτε πώς ζει το παιδί σας την εφαρμογή – κυλήστε ⌄",problem_h:"Σου θυμίζει κάτι;",problem_p:"Πρωινό δράμα, μάχη με τα δόντια, ποτέ πρόθυμα για ύπνο;",comic_sleep:"Ώρα για ύπνο!",comic_no:"Όχι! Όχι! 😫",comic_wake:"Ώρα να σηκωθείς!",comic_routine:"Ώρα για τη βραδινή ρουτίνα! 🎵",comic_morningroutine:"Ώρα για την πρωινή ρουτίνα! 🎵",comic_yay:"Γιούπι! 😄",comic_more:"Λίγο ακόμα!",comic_logo:"Γιούπι, ένα αστέρι! ⭐",comic_done:"Τα κατάφερα! 🏆",cap1:"Κάθε πρωί το ίδιο δράμα;",cap2:"Και κάθε βράδυ το ίδιο;",cap3:"Με το Kidzlist η ρουτίνα γίνεται παιχνίδι.",cap4:"Μάζεψε, κατάφερε, καμάρωσε – χωρίς πίεση.",study_txt:"από 300.000+ οικογένειες λένε: με παιχνίδι η ρουτίνα πετυχαίνει καλύτερα.",study_src:"(η πηγή θα προστεθεί)",chars_h:"Κάθε παιδί ένα προφίλ",chars_sub:"Διάφοροι χαρακτήρες – δικό σου χρώμα και λογότυπο",juni:"Ιούνιος",juni_sub:"Φωτεινό και χαρούμενο τη μέρα<br>Όμορφος έναστρος ουρανός τη νύχτα",dez:"Δεκέμβριος",dez_sub:"Κάθε μήνα ένας νέος κόσμος.",morgen_h:"Πρωινή ρουτίνα",morgen_sub:"Πάτα τις δουλειές – εντελώς μόνος σου.",abend_h:"Βραδινή ρουτίνα",abend_sub:"Και το βράδυ το ίδιο – βήμα βήμα.",sammeln_h:"Συλλογή & επιβράβευση",sammeln_p:"Και οι δύο ρουτίνες = ένα λογότυπο<br>Χωρίς καμία πίεση",weish_h:"Σοφία για τη μέρα",weish_p:"Για ανάγνωση, πρωί και βράδυ.",weish_m:"Πρωί:",weish_e:"Βράδυ:",weish_ms:"«Ένα καλό πρωινό σου δίνει δύναμη για παιχνίδι.»",weish_es:"«Καθαρά δόντια ονειρεύονται γλυκότερα.»",team_h:"Λειτουργία ομάδας",team_p:"Πολλά παιδιά, μία συσκευή –<br>ο καθένας τσεκάρει μόνος.",plan_h:"Ημερήσιο πρόγραμμα",plan_p:"Ελεύθερο πρόγραμμα για ξεχωριστές μέρες –<br>με ώρα και εικόνα.",belohn_h:"Επιβράβευση",belohn_p:"Ξόδεψε τα μαζεμένα λογότυπα στα 4 παιχνίδια.",cta:"Λήψη",trust:"Χωρίς διαφημίσεις · χωρίς παρακολούθηση",g_swap:"Ανταλλαγή",g_insert:"Τοποθέτηση",g_scratch:"Ξύσιμο",g_catch:"Πιάσιμο",h_swap:"Πάτα δύο κομμάτια για ανταλλαγή",h_insert:"Σύρε τα κομμάτια στη σωστή θέση",h_scratch:"Ξύσε με το δάχτυλο",h_catch:"Σύρε το καλάθι με το δάχτυλο",win:"Τα κατάφερες! 🎉",bald:"Σύντομα διαθέσιμο",sfair:"Ασφαλές & Δίκαιο",sub2:"Φτιαγμένο για γονείς και παιδιά.<br>Χωρίς διαφημίσεις, χωρίς παρακολούθηση.",ds:"Απόρρητο & Όροι χρήσης",
    morning:[["1f48b","Φιλί καλημέρας"],["1f6bd","Πάω τουαλέτα"],["1f4a7","Πίνω νερό"],["1f6cf-fe0f","Στρώνω κρεβάτι"],["1f963","Τρώω πρωινό"],["1f455","Ντύνομαι"],["1f9b7","Βουρτσίζω δόντια"],["1f487","Φτιάχνω μαλλιά"]],evening:[["1f9f9","Τακτοποιώ δωμάτιο"],["1f319","Βάζω πιτζάμες"],["1f6bd","Πάω τουαλέτα"],["1f9b7","Βουρτσίζω δόντια"],["1f45a","Ετοιμάζω ρούχα"],["1f392","Ετοιμάζω σακίδιο"],["1f4d6","Διαβάζω ιστορία"],["1f618","Φιλί καληνύχτας"]]}
 };
+// Zusatz-Texte fuer den Umbau 2026-06-28 (Kopf, Landschafts-Sequenz, Buendelung, Spiele, Sicher&Fair, Ziel)
+const EXTRA={
+ de:{study_txt:"Sterne sammeln motiviert – Belohnungssysteme werden von Kinderärzten empfohlen.",study_src:"American Academy of Pediatrics (AAP)",
+   hud_sub:"Routine für Kinder – mit Belohnung & Spaß",
+   ls1:"Tagsüber hell und freundlich",ls2:"Nachts mit schönem Sternenhimmel",
+   ls3:"Mit wechselnden Mondphasen und Sternzeichen",ls4:"Jeden Monat eine neue Welt",
+   rt_intro_m:"Tipp die Aufgaben an – ganz allein.",rt_intro_e:"Und abends genauso – Schritt für Schritt.",
+   bundle1_h:"Sammeln & Belohnung",bundle1_p:"Beide Routinen geschafft = ein Logo. Dazu eine Weisheit zum Vorlesen – ganz ohne Druck.",
+   bundle2_h:"Für die ganze Familie",bundle2_p:"Team-Modus für mehrere Kinder und ein freier Tagesplaner für besondere Tage.",
+   spiele_h:"Belohnung: vier Spiele",eigene_bilder:"Sogar eure eigenen Fotos werden zum Puzzle.",spiele_tap:"Tipp ein Spiel zum Spielen",
+   safe_h:"Sicher & fair",safe_sub:"Für Eltern und Kinder gebaut.",
+   safe1:"Keine Werbung",safe2:"Kein Tracking",safe3:"Daten bleiben auf dem Gerät",safe4:"Eltern-Code",safe5:"Kostenlos nutzbar",
+   ziel_p:"Kostenlos. Ohne Werbung, ohne Tracking."},
+ en:{study_txt:"Collecting stars motivates kids – reward systems are recommended by pediatricians.",study_src:"American Academy of Pediatrics (AAP)",
+   hud_sub:"Routine for kids – with rewards & fun",
+   ls1:"Bright and friendly by day",ls2:"A beautiful starry sky at night",
+   ls3:"With changing moon phases and star signs",ls4:"A new world every month",
+   rt_intro_m:"Tap the tasks – all by yourself.",rt_intro_e:"And the same in the evening – step by step.",
+   bundle1_h:"Collect & reward",bundle1_p:"Both routines done = one logo. Plus a little wisdom to read aloud – with no pressure.",
+   bundle2_h:"For the whole family",bundle2_p:"Team mode for several children and a free day planner for special days.",
+   spiele_h:"Reward: four games",eigene_bilder:"Even your own photos become a puzzle.",spiele_tap:"Tap a game to play",
+   safe_h:"Safe & fair",safe_sub:"Built for parents and children.",
+   safe1:"No ads",safe2:"No tracking",safe3:"Data stays on the device",safe4:"Parental code",safe5:"Free to use",
+   ziel_p:"Free. No ads, no tracking."},
+ gr:{study_txt:"Η συλλογή αστεριών παρακινεί – τα συστήματα επιβράβευσης συνιστώνται από παιδιάτρους.",study_src:"American Academy of Pediatrics (AAP)",
+   hud_sub:"Ρουτίνα για παιδιά – με επιβράβευση & κέφι",
+   ls1:"Φωτεινό και χαρούμενο τη μέρα",ls2:"Όμορφος έναστρος ουρανός τη νύχτα",
+   ls3:"Με εναλλασσόμενες φάσεις φεγγαριού και ζώδια",ls4:"Κάθε μήνα ένας νέος κόσμος",
+   rt_intro_m:"Πάτα τις δουλειές – εντελώς μόνος σου.",rt_intro_e:"Και το βράδυ το ίδιο – βήμα βήμα.",
+   bundle1_h:"Συλλογή & επιβράβευση",bundle1_p:"Και οι δύο ρουτίνες = ένα λογότυπο. Και μια σοφία για ανάγνωση – χωρίς πίεση.",
+   bundle2_h:"Για όλη την οικογένεια",bundle2_p:"Λειτουργία ομάδας για πολλά παιδιά κι ένα ελεύθερο πρόγραμμα για ξεχωριστές μέρες.",
+   spiele_h:"Επιβράβευση: τέσσερα παιχνίδια",eigene_bilder:"Ακόμα κι οι δικές σας φωτογραφίες γίνονται παζλ.",spiele_tap:"Πάτα ένα παιχνίδι για να παίξεις",
+   safe_h:"Ασφαλές & δίκαιο",safe_sub:"Φτιαγμένο για γονείς και παιδιά.",
+   safe1:"Χωρίς διαφημίσεις",safe2:"Χωρίς παρακολούθηση",safe3:"Τα δεδομένα μένουν στη συσκευή",safe4:"Γονικός κωδικός",safe5:"Δωρεάν χρήση",
+   ziel_p:"Δωρεάν. Χωρίς διαφημίσεις, χωρίς παρακολούθηση."}
+};
+Object.keys(EXTRA).forEach(l=>Object.assign(T[l],EXTRA[l]));
+// Variante C: Feature-Leiste (Karussell)
+const EXTRA2={
+ de:{leiste_h:"Was Kidzlist alles kann",fp_sammeln:"Beide Routinen = ein Logo.",fp_weish:"Zum Vorlesen, morgens & abends.",fp_team:"Mehrere Kinder, ein Gerät.",fp_plan:"Frei für besondere Tage."},
+ en:{leiste_h:"All Kidzlist can do",fp_sammeln:"Both routines = one logo.",fp_weish:"To read aloud, day & night.",fp_team:"Several kids, one device.",fp_plan:"Free for special days."},
+ gr:{leiste_h:"Τι κάνει το Kidzlist",fp_sammeln:"Δύο ρουτίνες = ένα λογότυπο.",fp_weish:"Για ανάγνωση, πρωί & βράδυ.",fp_team:"Πολλά παιδιά, μία συσκευή.",fp_plan:"Για ξεχωριστές μέρες."}
+};
+Object.keys(EXTRA2).forEach(l=>Object.assign(T[l],EXTRA2[l]));
+// Vier Feature-Kaertchen fuer die Leiste (doppelt gerendert -> nahtlose Endlos-Schleife)
+const FCARDS=t=>`<div class="fcard"><div class="fic"><img src="${IMG}logos/2b50.webp" alt=""></div><h3>${t.sammeln_h}</h3><p>${t.fp_sammeln}</p></div><div class="fcard"><div class="fic"><img src="${IMG}tasks/1f4d6.webp" alt=""></div><h3>${t.weish_h}</h3><p>${t.fp_weish}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/team.webp" alt=""></div><h3>${t.team_h}</h3><p>${t.fp_team}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/kalender.webp" alt=""></div><h3>${t.plan_h}</h3><p>${t.fp_plan}</p></div>`;
 let L=({el:'gr',en:'en',de:'de'})[(navigator.language||'de').slice(0,2).toLowerCase()]||'de';
 let TT=T[L];
 function makeBeats(t){return[
- {pos:'mid',html:`<div class="ctitle">${t.cap1}</div><div class="cgrid"><div class="cpanel morn" data-img="comic/morgen-problem-1"><span class="cph">🛏️</span><div class="cbub tl">${t.comic_wake}</div></div><div class="cpanel morn" data-img="comic/morgen-problem-2"><span class="cph">🙅</span><div class="cbub br shout">${t.comic_no}</div></div><div class="cpanel night" data-img="comic/abend-problem-1"><span class="cph">🧸</span><div class="cbub tl">${t.comic_sleep}</div></div><div class="cpanel night" data-img="comic/abend-problem-2"><span class="cph">😫</span><div class="cbub br shout">${t.comic_more}</div></div></div><div class="ccap">${t.cap2}</div><div class="weiter">⌄</div>`},
- {pos:'mid',html:`<div class="study"><div class="bignum">90%</div><p class="sub">${t.study_txt}</p><div class="ssrc">${t.study_src}</div></div><div class="weiter">⌄</div>`},
- {pos:'mid',html:`<div class="ctitle">${t.cap3}</div><div class="cgrid"><div class="cpanel morn" data-img="comic/morgen-app-1"><span class="cph">📱</span><div class="cbub tl">${t.comic_morningroutine}</div></div><div class="cpanel morn" data-img="comic/morgen-app-2"><span class="cph">⭐</span><div class="cbub br">${t.comic_logo}</div></div><div class="cpanel night" data-img="comic/abend-app-1"><span class="cph">🌙</span><div class="cbub tl">${t.comic_routine}</div></div><div class="cpanel night" data-img="comic/abend-app-2"><span class="cph">🏆</span><div class="cbub br">${t.comic_done}</div></div></div><div class="ccap">${t.cap4}</div><div class="weiter">⌄</div>`},
- {pos:'mid',html:`${LOGO}<p class="sub">${t.intro_sub}</p>${STORES}<div class="trust">${t.trust}</div><div class="weiter">${t.intro_w}</div>`},
+ {pos:'mid',clast:1,html:`<div class="clpage"><div class="clband">${t.cap1}</div><div class="clgrid"><div class="clpanel morn area-a" data-img="comic/morgen-problem-1" style="--i:0"><div class="clpic"></div><span class="clph">🛏️</span><div class="clbub tl">${t.comic_wake}</div></div><div class="clpanel morn area-b" data-img="comic/morgen-problem-2" style="--i:1"><div class="clpic"></div><span class="clph">🙅</span><div class="clbub br shout">${t.comic_no}</div></div><div class="clpanel night area-c" data-img="comic/abend-problem-1" style="--i:2"><div class="clpic"></div><span class="clph">🧸</span><div class="clbub tl">${t.comic_sleep}</div></div><div class="clpanel night area-d" data-img="comic/abend-problem-2" style="--i:3"><div class="clpic"></div><span class="clph">😫</span><div class="clbub br shout">${t.comic_more}</div></div></div><div class="clband bot">${t.cap2}</div></div>`},
+ {pos:'mid',html:`<div class="study"><img class="studyimg" src="${IMG}logos/2b50.webp" alt=""><p class="sub">${t.study_txt}</p><div class="ssrc">${t.study_src}</div></div><div class="weiter">⌄</div>`},
+ {pos:'mid',clast:1,html:`<div class="clpage"><div class="clband">${t.cap3}</div><div class="clgrid"><div class="clpanel morn area-a" data-img="comic/morgen-app-1" style="--i:0"><div class="clpic"></div><span class="clph">📱</span><div class="clbub tl">${t.comic_morningroutine}</div></div><div class="clpanel morn area-b" data-img="comic/morgen-app-2" style="--i:1"><div class="clpic"></div><span class="clph">⭐</span><div class="clbub br">${t.comic_logo}</div></div><div class="clpanel night area-c" data-img="comic/abend-app-1" style="--i:2"><div class="clpic"></div><span class="clph">🌙</span><div class="clbub tl">${t.comic_routine}</div></div><div class="clpanel night area-d" data-img="comic/abend-app-2" style="--i:3"><div class="clpic"></div><span class="clph">🏆</span><div class="clbub br">${t.comic_done}</div></div></div><div class="clband bot">${t.cap4}</div></div>`},
  {pos:'mid',html:`<h2>${t.chars_h}</h2><p class="sub">${t.chars_sub}</p><div class="chwrap"><div class="chrow2 r" id="chrowA"></div><div class="chrow2 l" id="chrowB"></div></div>`},
- {pos:'left',land:true,html:LAND('juni',t.juni)+`<p class="sub">${t.juni_sub}</p>`},
- {pos:'right',land:true,html:LAND('dez',t.dez)+`<p class="sub">${t.dez_sub}</p>`},
- {pos:'mid',html:`<h2>${t.morgen_h}</h2><p class="sub">${t.morgen_sub}</p><div class="rt" id="rtMorgen"></div><div class="rtwin" id="winMorgen"></div>`},
- {pos:'mid',html:`<h2>${t.abend_h}</h2><p class="sub">${t.abend_sub}</p><div class="rt" id="rtAbend"></div><div class="rtwin" id="winAbend"></div>`},
- {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}logos/2b50.webp" alt=""></div><div><h2>${t.sammeln_h}</h2><p>${t.sammeln_p}</p></div></div>`},
- {pos:'bot',html:`<div class="featrow"><div class="ic"><img src="${IMG}tasks/1f4d6.webp" alt=""></div><div><h2>${t.weish_h}</h2><p>${t.weish_p}</p></div></div><div class="wis"><b>${t.weish_m}</b> ${t.weish_ms}<br><b>${t.weish_e}</b> ${t.weish_es}</div>`},
- {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/team.webp" alt=""></div><div><h2>${t.team_h}</h2><p>${t.team_p}</p></div></div>`},
- {pos:'bot',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/kalender.webp" alt=""></div><div><h2>${t.plan_h}</h2><p>${t.plan_p}</p></div></div>`},
- {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/wuerfel.webp" alt=""></div><div><h2>${t.belohn_h}</h2><p>${t.belohn_p}</p></div></div>`},
- {pos:'mid',game:'swap',img:'puzzle/maerchen/01',html:`<h2>${t.g_swap}</h2><div class="gstage"></div><div class="gmsg"></div>`},
- {pos:'mid',game:'insert',img:'puzzle/helden/01',html:`<h2>${t.g_insert}</h2><div class="gstage"></div><div class="gmsg"></div>`},
- {pos:'mid',game:'scratch',img:'puzzle/tiere/01',html:`<h2>${t.g_scratch}</h2><div class="gstage"></div><div class="gmsg"></div>`},
- {pos:'mid',game:'catch',img:'logos/2b50',html:`<h2>${t.g_catch}</h2><div class="gstage"></div><div class="gmsg"></div>`}
+ {pos:'mid',landseq:true,html:`<div class="lseq" id="lseq"><div class="lsphoto on" style="background-image:url('${IMG}land/juni-tag.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/juni-nacht.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/dez-nacht.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/dez-tag.webp')"></div></div><div class="lscap" id="lscap">${t.ls1}</div>`},
+ {pos:'mid',routineseq:true,html:`<div class="rtblock" id="rtMorgenBlock"><h2 class="rth">${t.morgen_h}</h2><p class="sub rtsub">${t.rt_intro_m}</p><div class="rt rt4" id="rtMorgen"></div></div><div class="rtblock dimmed" id="rtAbendBlock"><h2 class="rth">${t.abend_h}</h2><p class="sub rtsub">${t.rt_intro_e}</p><div class="rt rt4" id="rtAbend"></div></div>`},
+ {pos:'mid',html:`<h2>${t.leiste_h}</h2><div class="fstrip"><div class="frow">${FCARDS(t)}${FCARDS(t)}</div></div>`},
+ {pos:'mid',games4:true,html:`<h2>${t.spiele_h}</h2><p class="sub">${t.eigene_bilder}</p><div class="g4grid" id="g4grid"></div><div class="g4hint" id="g4hint">${t.spiele_tap}</div>`},
+ {pos:'mid',html:`<div class="safebox"><h2>${t.safe_h}</h2><p class="sub" style="font-weight:700;opacity:.95">${t.safe_sub}</p><div class="safegrid"><div>${t.safe1}</div><div>${t.safe2}</div><div>${t.safe3}</div><div>${t.safe4}</div><div>${t.safe5}</div></div></div><div class="weiter">⌄</div>`}
 ];}
 const BEATS=makeBeats(TT);
 
 const ov=document.getElementById('ov');
-BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat pos-'+b.pos;d.id='b'+i;d.innerHTML=b.html;ov.appendChild(d);b.el=d;});
+BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat pos-'+b.pos+(b.clast?' clast':'');d.id='b'+i;d.innerHTML=b.html;ov.appendChild(d);b.el=d;});
 // Abstaende grosszuegig verteilen (Landschaft laenger, Spiele klar getrennt -> kein Ueberlappen)
-[0,0.09,0.17,0.25,0.31,0.37,0.42,0.48,0.54,0.58,0.62,0.65,0.69,0.73,0.79,0.85,0.90,0.95].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});   // grosse Beats mit groesserem Abstand
-[0,2,4,5,6,7,8,14,15,16,17].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routinen/Spiele): mehr Wolke davor   // 0-4 Comic+Studie, 5 Logo, ...; catch 0.93 -> Wegstueck ins Ziel
-BEATS[4].wide=3;   // "Jedes Kind ein Profil" 3x so lange voll sichtbar
+// 10 Beats, grosszuegig verteilt -> mehr sichtbare Fahrt dazwischen (entspannte Reise, Gerit 2026-06-28)
+[0,0.11,0.22,0.33,0.44,0.56,0.67,0.79,0.90].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});
+[0,2,3,4,5,7,8].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routine/Spiele/Sicher&Fair): erst naeher am Punkt -> mehr Wolke davor
 
 // Routinen + Charaktere fuellen (sprachabhaengig), Popup-Texte, Sprachwechsel
-function fillRoutine(boxId,tasks,winId){const box=document.getElementById(boxId);if(!box)return;box.innerHTML='';
-  tasks.forEach(t=>{const e=document.createElement('div');e.className='t';e.innerHTML=`<img src="${IMG}tasks/${t[0]}.webp" alt=""><span class="l">${t[1]}</span><span class="hk">✓</span>`;
-    e.onclick=()=>{e.classList.toggle('ok');const n=box.querySelectorAll('.t.ok').length,w=document.getElementById(winId);if(n===tasks.length){w.textContent=TT.win;konf();}else w.textContent='';};box.appendChild(e);});}
+function fillRoutine(boxId,tasks){const box=document.getElementById(boxId);if(!box)return;box.innerHTML='';
+  tasks.slice(0,4).forEach(t=>{const e=document.createElement('div');e.className='t';e.innerHTML=`<img src="${IMG}tasks/${t[0]}.webp" alt=""><span class="l">${t[1]}</span><span class="hk">✓</span>`;box.appendChild(e);});}   // nur erste 4 (Punkt 4); abgehakt wird automatisch in runRoutineSeq
 const CHARS=["unicorn","princess","Fee","mermaid","Drache","Schmetterling","hero","Roboter","ritter","pirat","ninja","samurai","aerztin","astronautin","pilot","polizist","feuerwehr","saengerin"];
 function fillChars(){['chrowA','chrowB'].forEach((id,ri)=>{const el=document.getElementById(id);if(!el)return;const arr=CHARS.slice(ri*9,ri*9+9);const h=arr.map(c=>`<img src="${IMG}chars/${c}.webp" loading="lazy" alt="">`).join('');el.innerHTML=h+h;});}
-function applyPopup(){const s=(id,v,html)=>{const e=document.getElementById(id);if(e){if(html)e.innerHTML=v;else e.textContent=v;}};s('wbald',TT.bald);s('wsfair',TT.sfair);s('wsub2',TT.sub2,1);s('wds',TT.ds);s('cta',TT.cta);}
-function loadComic(){document.querySelectorAll('.cpanel[data-img]').forEach(p=>{const name=p.getAttribute('data-img');const im=new Image();im.onload=()=>{p.style.backgroundImage="url('"+IMG+name+".webp')";const ph=p.querySelector('.cph');if(ph)ph.style.display='none';};im.src=IMG+name+'.webp';});}   // echte Comic-Bilder laden, sobald vorhanden; bis dahin Emoji-Platzhalter
-function renderDynamic(){fillRoutine('rtMorgen',TT.morning,'winMorgen');fillRoutine('rtAbend',TT.evening,'winAbend');fillChars();applyPopup();loadComic();}
+function applyPopup(){const s=(id,v,html)=>{const e=document.getElementById(id);if(e){if(html)e.innerHTML=v;else e.textContent=v;}};s('wbald',TT.bald);s('wzielp',TT.ziel_p,1);s('wds',TT.ds);s('cta',TT.cta);s('hudsub',TT.hud_sub);s('hudcta',TT.cta);}
+function loadComic(){document.querySelectorAll('.clpanel[data-img]').forEach(p=>{const name=p.getAttribute('data-img');const im=new Image();im.onload=()=>{const pic=p.querySelector('.clpic');if(pic)pic.style.backgroundImage="url('"+IMG+name+".webp')";const ph=p.querySelector('.clph');if(ph)ph.style.display='none';};im.src=IMG+name+'.webp';});}   // echte Comic-Bilder laden, sobald vorhanden; bis dahin Emoji-Platzhalter
+function renderDynamic(){fillRoutine('rtMorgen',TT.morning);fillRoutine('rtAbend',TT.evening);fillChars();fillGames4();applyPopup();loadComic();}
+
+// ===== Landschafts-Sequenz (Auto): Juni Tag -> Juni Nacht -> Dez Nacht -> Dez Tag, mit einfahrendem Text =====
+let landSeqRun=false,landTimers=[];
+function runLandSeq(){if(landSeqRun)return;landSeqRun=true;
+  const ph=[...document.querySelectorAll('#lseq .lsphoto')],cap=document.getElementById('lscap');if(!ph.length)return;
+  const steps=()=>[TT.ls1,TT.ls2,TT.ls3,TT.ls4];
+  const show=i=>{ph.forEach((p,k)=>p.classList.toggle('on',k===i));cap.classList.remove('in');void cap.offsetWidth;cap.textContent=steps()[i];cap.classList.add('in');};
+  show(0);[1,2,3].forEach(i=>landTimers.push(setTimeout(()=>show(i),i*3000)));   // je 3s: 2s zeigen + 1s weiche Ueberblendung (CSS)
+}
+function resetLandSeq(){landSeqRun=false;landTimers.forEach(clearTimeout);landTimers=[];
+  document.querySelectorAll('#lseq .lsphoto').forEach((p,k)=>p.classList.toggle('on',k===0));
+  const cap=document.getElementById('lscap');if(cap){cap.textContent=TT.ls1;cap.classList.remove('in');}}
+
+// ===== Routine-Demo (Auto): Morgen abhaken, dann Abend einblenden + abhaken =====
+let routineSeqRun=false,rtTimers=[];
+function runRoutineSeq(){if(routineSeqRun)return;routineSeqRun=true;
+  const ab=document.getElementById('rtAbendBlock');
+  const mt=[...document.querySelectorAll('#rtMorgen .t')],at=[...document.querySelectorAll('#rtAbend .t')];
+  let d=700;
+  mt.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*850)));
+  d+=mt.length*850+700;
+  rtTimers.push(setTimeout(()=>{if(ab)ab.classList.remove('dimmed');},d));d+=700;
+  at.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*850)));
+}
+function resetRoutineSeq(){routineSeqRun=false;rtTimers.forEach(clearTimeout);rtTimers=[];
+  document.querySelectorAll('#rtMorgen .t,#rtAbend .t').forEach(e=>e.classList.remove('ok'));
+  const ab=document.getElementById('rtAbendBlock');if(ab)ab.classList.add('dimmed');}
+
+// ===== Spiele 2x2: Vorschau (ausgegraut) -> spielt sich nacheinander vor (farbig) -> Klick startet das echte Spiel =====
+const G4=[{k:'swap',label:'g_swap',img:'puzzle/maerchen/01'},{k:'insert',label:'g_insert',img:'puzzle/helden/01'},{k:'scratch',label:'g_scratch',img:'puzzle/tiere/01'},{k:'catch',label:'g_catch',img:'logos/2b50'}];
+function fillGames4(){const g=document.getElementById('g4grid');if(!g)return;
+  g.innerHTML=G4.map(it=>{const url=IMG+it.img+'.webp';let pre='';
+    // Vorschau zeigt die ECHTE Mechanik unserer Spiele (Gerit 2026-06-28):
+    if(it.k==='swap')pre=`<div class="g4swap"><div class="g4q q0" style="background-image:url('${url}')"></div><div class="g4q q1" style="background-image:url('${url}')"></div><div class="g4q q2" style="background-image:url('${url}')"></div><div class="g4q q3" style="background-image:url('${url}')"></div></div>`;   // 2x2-Tauschen
+    else if(it.k==='insert')pre=`<div class="g4pic" style="background-image:url('${url}')"></div><div class="g4hole"></div><div class="g4piece" style="background-image:url('${url}')"></div>`;   // Jigsaw-Teil einsetzen
+    else if(it.k==='scratch')pre=`<div class="g4pic" style="background-image:url('${url}')"></div><div class="g4cover"></div>`;   // lila Kratzschicht
+    else pre=`<div class="g4pic g4sky"></div><img class="g4drop" src="${url}" alt=""><div class="g4basket">🧺</div>`;   // Korb faengt Logo
+    return `<div class="g4tile g4-${it.k}" data-k="${it.k}" onclick="openGame('${it.k}')"><div class="g4stage">${pre}</div><div class="g4lbl">${TT[it.label]}</div><div class="g4check">✓</div></div>`;}).join('');
+}
+let games4Run=false,g4Timers=[];
+function runGames4Seq(){if(games4Run)return;games4Run=true;
+  const tiles=[...document.querySelectorAll('#g4grid .g4tile')];
+  tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.add('solving');
+    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},1700));},700+i*2100));});
+}
+function resetGames4(){games4Run=false;g4Timers.forEach(clearTimeout);g4Timers=[];
+  document.querySelectorAll('#g4grid .g4tile').forEach(t=>t.classList.remove('solving','solved'));}
+// Echtes Spiel im Vollbild-Overlay starten (nutzt die vorhandenen Spiel-Funktionen)
+let gmClean=null;
+function openGame(k){const ov=document.getElementById('gameModal'),st=ov.querySelector('.gmstage'),msg=ov.querySelector('.gmmsg');
+  st.innerHTML='';msg.textContent='';if(gmClean){gmClean();gmClean=null;}
+  ov.querySelector('.gmtitle').textContent=TT[{swap:'g_swap',insert:'g_insert',scratch:'g_scratch',catch:'g_catch'}[k]];
+  const url=IMG+(k==='catch'?'logos/2b50':{swap:'puzzle/maerchen/01',insert:'puzzle/helden/01',scratch:'puzzle/tiere/01'}[k])+'.webp';
+  ov.classList.add('on');gmClean=GAMES[k](st,url,msg,null);   // beat=null -> kein Auto-Ausblenden
+}
+function closeGame(){const ov=document.getElementById('gameModal');ov.classList.remove('on');if(gmClean){gmClean();gmClean=null;}}
 function setLang(l){L=l;TT=T[l];const nb=makeBeats(TT);BEATS.forEach((b,i)=>{if(b.clean){b.clean();b.clean=null;}b.live=false;b.won=false;b.el.innerHTML=nb[i].html;});renderDynamic();document.querySelectorAll('#lang button').forEach(x=>x.classList.toggle('on',x.dataset.l===l));}
 document.querySelectorAll('#lang button').forEach(x=>x.onclick=()=>setLang(x.dataset.l));
 setLang(L);
@@ -297,7 +510,7 @@ setLang(L);
 // Snap-Navigation: ein Wisch/Scroll/Tastendruck = ein Punkt weiter (kein muehsames Endlos-Scrollen)
 document.body.style.overflow='hidden';
 if('scrollRestoration' in history)history.scrollRestoration='manual';scrollTo(0,0);
-let curT=0,tgtT=0,waveOn=false,curBeat=0;
+let curT=0,tgtT=0,waveOn=false,curBeat=0,musikAuto=false;
 const NB=BEATS.length,HALF=0.024;
 const GAMES={swap:gSwap,insert:gInsert,scratch:gScratch,catch:gCatch};
 function goBeat(dir){const n=Math.max(0,Math.min(NB,curBeat+dir));if(n===curBeat)return;curBeat=n;tgtT=(curBeat>=NB)?1:BEATS[curBeat].at;}
@@ -306,8 +519,10 @@ function updateBeats(t){
     if(b.won){b.el.style.opacity='0';b.el.classList.remove('on');return;}
     const dist=Math.abs(t-b.at),r=b.big?0.018:0.03;   // grosse Popups erscheinen erst naeher am Punkt -> deutlich mehr Wolke davor
     const o=dist<r*0.4?1:Math.max(0,1-(dist-r*0.4)/(r*0.6));
-    b.el.style.opacity=o;b.el.classList.toggle('on',o>0.55);
-    if(b.land){const ni=b.el.querySelector('.night');if(ni)ni.style.opacity=(o>0.9)?'1':'0';}   // voll angekommen -> langsam Nacht (CSS-Transition)
+    b.el.style.opacity=o;const on=o>0.55;b.el.classList.toggle('on',on);
+    if(b.landseq){if(on&&dist<0.02)runLandSeq();else if(landSeqRun&&dist>0.06)resetLandSeq();}        // Landschafts-Sequenz beim Ankommen
+    if(b.routineseq){if(on&&dist<0.02)runRoutineSeq();else if(routineSeqRun&&dist>0.06)resetRoutineSeq();}   // Routine-Auto-Abhaken
+    if(b.games4){if(on&&dist<0.02)runGames4Seq();else if(games4Run&&dist>0.06)resetGames4();}          // Spiele spielen sich vor
   });
   let bg=null,bd=9;for(const b of BEATS)if(b.game&&!b.won){const d=Math.abs(t-b.at);if(d<bd){bd=d;bg=b;}}
   for(const b of BEATS){if(!b.game)continue;
@@ -317,17 +532,23 @@ function updateBeats(t){
   document.getElementById('hint').style.opacity=(t>0.92||curBeat>=NB-2)?'0':'.45';
   document.getElementById('prog').style.transform='scaleX('+t+')';
   document.getElementById('cta').classList.toggle('on',t>0.3&&t<0.92);
+  // Musik startet automatisch nach den Comics, sobald die Reise im Hauptteil ist (Gerit 2026-06-28).
+  // Greift nur, wenn der Nutzer den Ton nicht schon selbst gesetzt hat; per Geste (Wischen) ist play() erlaubt.
+  if(!musikAuto&&t>0.24){const a=document.getElementById('bgm');if(a&&a.paused){musikAuto=true;a.play().then(()=>setSnd(true)).catch(()=>{});}}
 }
 // Eingabe -> ein Schritt pro Geste (Wheel gedrosselt, Touch-Swipe, Tastatur)
 let wlock=false;
 addEventListener('wheel',e=>{e.preventDefault();if(wlock||Math.abs(e.deltaY)<6)return;wlock=true;setTimeout(()=>{wlock=false;},480);goBeat(e.deltaY>0?1:-1);},{passive:false});
-let ty0=null;
-addEventListener('touchstart',e=>{ty0=e.touches[0].clientY;},{passive:true});
-addEventListener('touchmove',e=>{if(ty0!=null&&Math.abs(e.touches[0].clientY-ty0)>10)e.preventDefault();},{passive:false});
-addEventListener('touchend',e=>{if(ty0==null)return;const dy=e.changedTouches[0].clientY-ty0;ty0=null;if(Math.abs(dy)>40)goBeat(dy<0?1:-1);},{passive:true});
+let ty0=null,tx0=null;
+addEventListener('touchstart',e=>{ty0=e.touches[0].clientY;tx0=e.touches[0].clientX;},{passive:true});
+addEventListener('touchmove',e=>{if(ty0!=null&&(Math.abs(e.touches[0].clientY-ty0)>10||Math.abs(e.touches[0].clientX-tx0)>10))e.preventDefault();},{passive:false});
+addEventListener('touchend',e=>{if(ty0==null)return;const dy=e.changedTouches[0].clientY-ty0,dx=e.changedTouches[0].clientX-tx0;ty0=null;
+  // oben ODER rechts wischen = weiter; unten ODER links = zurueck (Gerit 2026-06-28)
+  if(Math.abs(dx)>Math.abs(dy)){if(Math.abs(dx)>40)goBeat(dx>0?1:-1);}
+  else{if(Math.abs(dy)>40)goBeat(dy<0?1:-1);}},{passive:true});
 addEventListener('keydown',e=>{if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();goBeat(1);}else if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();goBeat(-1);}});
 let frame=0;
-function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.075;setCurveT(curT);updateBeats(curT);
+function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.045;setCurveT(curT);updateBeats(curT);
   const seg=Math.max(0,Math.min(1,curT));for(const l of lanes)l.geometry.setDrawRange(0,Math.floor(laneMax*seg));  // Linien enden direkt unter der Wolke (kein Versatz); die grosse Wolke darueber verdeckt das Ende
   shadow.geometry.setDrawRange(0,Math.floor(shadowMax*seg));
   const tw=1+Math.sin(frame*0.07)*0.05;tip.scale.setScalar(tw);tip.position.y=1.5+Math.sin(frame*0.05)*0.1;bergG.position.z=curve.getPointAt(Math.max(0,Math.min(0.999,curT))).z;
@@ -417,7 +638,9 @@ function konfBoom(){for(let i=0;i<130;i++){const k=document.createElement('div')
   k.style.animation=`boom ${1+Math.random()*0.9}s ease-out forwards`;document.body.appendChild(k);setTimeout(()=>k.remove(),2200);}}
 // Hintergrund-Musik aus der App (an/aus per Knopf; startet auf Klick wegen Autoplay-Regeln)
 const bgm=document.getElementById('bgm');bgm.volume=0.45;
-document.getElementById('snd').onclick=function(){if(bgm.paused){bgm.play().then(()=>{this.textContent='🔊';}).catch(()=>{});}else{bgm.pause();this.textContent='🔇';}};
+const sndBtn=document.getElementById('snd');
+function setSnd(an){const im=sndBtn.querySelector('img');if(im)im.src=IMG+'ui/'+(an?'lautsprecher':'lautsprecher_aus')+'.webp';}
+sndBtn.onclick=function(){if(bgm.paused){bgm.play().then(()=>setSnd(true)).catch(()=>{});}else{bgm.pause();setSnd(false);}};
 </script>
 </body>
 </html>

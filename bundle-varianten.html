@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kidzlist – Bündelung der Funktionen: Variante B vs. C</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--tinte:#1B1B2F;--indigo:#5856D6;--gelb:#FFC72C;--gruen:#2ECF6E}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',system-ui,sans-serif;color:var(--tinte);background:linear-gradient(180deg,#7ec8ff,#bfe6ff 45%,#dff3e0 80%,#cfeeb0);min-height:100vh;padding:1.4rem 1rem 3rem}
+  h1{font-family:'Fredoka',sans-serif;font-weight:700;text-align:center;font-size:1.3rem;margin-bottom:.3rem}
+  .note{text-align:center;font-size:.82rem;opacity:.7;max-width:30rem;margin:0 auto 1.6rem}
+  .cols{display:flex;flex-wrap:wrap;gap:1.6rem;justify-content:center;align-items:flex-start}
+  .col{flex:1 1 320px;max-width:380px}
+  .vlabel{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.05rem;text-align:center;margin-bottom:.7rem;
+    background:var(--tinte);color:#fff;border-radius:999px;padding:.35rem 1rem;display:inline-block}
+  .vwrap{text-align:center}
+  /* Popup-Karte wie in der echten Seite */
+  .card{background:rgba(255,255,255,.96);border-radius:1.6rem;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:1.2rem 1.1rem;margin:0 auto 1rem;text-align:center}
+  .card h2{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.3rem;margin-bottom:.2rem}
+  .card .sub{font-size:.9rem;opacity:.78;margin-bottom:.3rem}
+  .featrow{display:flex;align-items:center;gap:.7rem;text-align:left;margin-top:.55rem}
+  .featrow .ic{width:3rem;height:3rem;flex:none;display:grid;place-items:center;background:#f4f6fb;border-radius:50%;font-size:1.5rem}
+  .featrow h3{font-size:1.02rem;margin:0}
+  .featrow p{font-size:.82rem;opacity:.76;margin:0;line-height:1.3}
+  .wis{margin-top:.55rem;background:#f7f4ff;border-radius:.8rem;padding:.5rem .6rem;font-size:.8rem;text-align:left}
+  .wis b{color:var(--indigo)}
+  /* Variante C: Feature-Leiste */
+  .strip{display:flex;gap:.7rem;overflow-x:auto;padding:.3rem .1rem .6rem;scroll-snap-type:x mandatory}
+  .fcard{flex:0 0 138px;scroll-snap-align:center;background:#fff;border-radius:1.1rem;box-shadow:0 8px 20px rgba(0,0,0,.14);padding:.9rem .6rem;text-align:center}
+  .fcard .fic{font-size:2.1rem;margin-bottom:.3rem}
+  .fcard h3{font-family:'Fredoka',sans-serif;font-size:.95rem;margin-bottom:.2rem}
+  .fcard p{font-size:.74rem;opacity:.75;line-height:1.28}
+  .dots{display:flex;gap:.3rem;justify-content:center;margin-top:.2rem}
+  .dots i{width:.5rem;height:.5rem;border-radius:50%;background:var(--tinte);opacity:.25}
+  .dots i:first-child{opacity:.7}
+  .hint{font-size:.74rem;opacity:.55;margin-top:.4rem}
+</style>
+</head>
+<body>
+  <h1>Wie sollen die Funktionen erscheinen?</h1>
+  <p class="note">Zwei Wege, die fünf verstreuten Funktions-Halte zu bündeln. „Belohnung" wird in beiden Fällen die Überschrift über den Spielen. Sag mir, welche dir besser gefällt – die setze ich dann in die echte Seite.</p>
+
+  <div class="cols">
+    <!-- VARIANTE B: zwei thematische Halte -->
+    <div class="col"><div class="vwrap"><span class="vlabel">Variante B · Zwei Halte</span></div>
+      <div class="card">
+        <div class="featrow"><div class="ic">⭐</div><div><h3>Sammeln & Belohnung</h3><p>Beide Routinen geschafft = ein Logo. Dazu eine Weisheit zum Vorlesen – ganz ohne Druck.</p></div></div>
+        <div class="wis"><b>Morgens:</b> „Ein gutes Frühstück gibt dir Kraft zum Spielen."<br><b>Abends:</b> „Saubere Zähne träumen süßer."</div>
+      </div>
+      <div class="card">
+        <h2>Für die ganze Familie</h2>
+        <div class="featrow"><div class="ic">👨‍👩‍👧</div><div><h3>Team-Modus</h3><p>Mehrere Kinder, ein Gerät – jeder hakt selbst ab.</p></div></div>
+        <div class="featrow"><div class="ic">📅</div><div><h3>Tagesplaner</h3><p>Freier Plan für besondere Tage – mit Uhrzeit und Bild.</p></div></div>
+      </div>
+      <p class="hint">→ Die Wolke hält zweimal kurz. Ruhiger, jede Karte hat Raum.</p>
+    </div>
+
+    <!-- VARIANTE C: eine Feature-Leiste -->
+    <div class="col"><div class="vwrap"><span class="vlabel">Variante C · Eine Leiste</span></div>
+      <div class="card">
+        <h2>Was Kidzlist alles kann</h2>
+        <p class="sub">Wisch dich durch</p>
+        <div class="strip">
+          <div class="fcard"><div class="fic">⭐</div><h3>Sammeln</h3><p>Beide Routinen = ein Logo.</p></div>
+          <div class="fcard"><div class="fic">📖</div><h3>Weisheiten</h3><p>Zum Vorlesen, morgens & abends.</p></div>
+          <div class="fcard"><div class="fic">👨‍👩‍👧</div><h3>Team-Modus</h3><p>Mehrere Kinder, ein Gerät.</p></div>
+          <div class="fcard"><div class="fic">📅</div><h3>Tagesplaner</h3><p>Frei für besondere Tage.</p></div>
+        </div>
+        <div class="dots"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <p class="hint">→ Ein Halt, vier Kärtchen zum Durchwischen. Kompakter, verspielter.</p>
+    </div>
+  </div>
+</body>
+</html>
