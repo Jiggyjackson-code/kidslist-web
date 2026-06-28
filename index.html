@@ -102,6 +102,27 @@
   .study .bignum{font-size:4rem;font-weight:800;background:linear-gradient(90deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05}
   .study .studyimg{width:4.6rem;height:4.6rem;margin:0 auto .25rem;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}
   .study .ssrc{font-size:.66rem;opacity:.5;margin-top:.6rem}
+  /* Drei belegte Studien als gestalteter Wendepunkt zwischen den Comics: Bänder + Badges, einzeln von links einfliegend */
+  .studyh{font-size:1.3rem;margin-bottom:.7rem;line-height:1.15}
+  .studygrid{display:flex;flex-direction:column;gap:.5rem}
+  .studygrid > *{opacity:0;transform:translateX(-46px)}
+  .beat.on .studygrid > *{animation:sflyin .5s cubic-bezier(.2,1,.3,1) forwards}
+  .beat.on .studygrid > *:nth-child(1){animation-delay:.15s}
+  .beat.on .studygrid > *:nth-child(2){animation-delay:.5s}
+  .beat.on .studygrid > *:nth-child(3){animation-delay:.85s}
+  .beat.on .studygrid > *:nth-child(4){animation-delay:1.25s}
+  .beat.on .studygrid > *:nth-child(5){animation-delay:1.6s}
+  @keyframes sflyin{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
+  .studygh{align-self:flex-start;font-size:.82rem;font-weight:800;color:#fff;border-radius:999px;padding:.32rem .9rem;margin:.3rem 0 .1rem;line-height:1.2;box-shadow:0 3px 9px rgba(0,0,0,.18)}
+  .studygh:first-child{margin-top:0}
+  .studygh.prob{background:linear-gradient(90deg,var(--orange),var(--rosa))}
+  .studygh.sol{background:linear-gradient(90deg,var(--indigo),var(--gruen))}
+  .studycard{display:flex;align-items:center;gap:.7rem;background:#fff;border-radius:1rem;padding:.6rem .7rem;text-align:left;box-shadow:0 5px 14px rgba(27,27,47,.1)}
+  .snum{font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;background:var(--indigo);flex:0 0 2.9rem;height:2.9rem;border-radius:50%;display:grid;place-items:center;line-height:1;box-shadow:0 3px 8px rgba(88,86,214,.35)}
+  .sc2 .snum{background:var(--pink);box-shadow:0 3px 8px rgba(255,61,119,.35)}
+  .sc3 .snum{background:var(--gruen);box-shadow:0 3px 8px rgba(46,207,110,.35)}
+  .stxt p{font-size:.84rem;margin:0;font-weight:600;line-height:1.25}
+  .stxt .ssrc{font-size:.61rem;opacity:.5;margin-top:.15rem}
   .jp-piece{display:inline-block;line-height:0;touch-action:none}
   .scroll-hint{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:1.6rem;opacity:.55;z-index:6;animation:bb 1.5s infinite;pointer-events:none;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.3)}
   @keyframes bb{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
@@ -133,11 +154,11 @@
   .hudblock:active{transform:scale(.97)}
   /* Landschafts-Sequenz */
   .lseq{position:relative;height:300px;aspect-ratio:500/1082;margin:.2rem auto .5rem;border-radius:1.1rem;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.25);border:5px solid #1B1B2F}
-  .lsphoto{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease}
+  .lsphoto{position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;transition:opacity .55s ease}
   .lsphoto.on{opacity:1}
-  .lscap{font-weight:700;font-size:1.02rem;min-height:1.35rem;opacity:0;transform:translateY(10px)}
-  .lscap.in{animation:lcapin .6s cubic-bezier(.2,1,.3,1) forwards}
-  @keyframes lcapin{to{opacity:1;transform:none}}
+  .lscap{font-weight:700;font-size:1.02rem;height:2.7rem;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;opacity:0;transform:translateX(-45px)}   /* feste Hoehe: kein Springen; Text fliegt von links rein (Gerit) */
+  .lscap.in{animation:lcapin .55s cubic-bezier(.2,1,.3,1) forwards}
+  @keyframes lcapin{from{opacity:0;transform:translateX(-45px)}to{opacity:1;transform:none}}
   /* Routine-Demo */
   .rtblock{transition:opacity .5s,filter .5s}
   .rtblock+.rtblock{margin-top:.65rem;padding-top:.55rem;border-top:1.5px solid #eee}
@@ -148,6 +169,12 @@
   .rt4 .t{padding:.4rem .12rem}
   .rt4 .t img{width:2.2rem;height:2.2rem}
   .rt4 .t .l{font-size:.52rem}
+  /* Logo-Sammel-Anzeige (aus index_flat): fuellt sich halb nach Morgen, voll nach Abend */
+  .rt-stand{display:flex;align-items:center;justify-content:center;gap:.7rem;font-weight:700;margin-top:.8rem}
+  .rt-coin{width:3rem;height:3rem;border-radius:50%;border:3px solid var(--gelb);display:grid;place-items:center;background:conic-gradient(var(--gelb) 0%,#f4f6fb 0%);transition:background .5s}
+  .rt-coin img{width:1.7rem;height:1.7rem;object-fit:contain}
+  .rt-win{min-height:1.3rem;margin-top:.5rem;font-weight:700;color:var(--gruen);opacity:0;transform:translateY(8px);transition:.4s;text-align:center;font-size:.95rem}
+  .rt-win.show{opacity:1;transform:none}
   /* Spiele 2x2 mit Vorspiel */
   .g4grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:.55rem 0 .35rem}
   .g4tile{position:relative;cursor:pointer;border-radius:.9rem;overflow:hidden;border:3px solid #1B1B2F;box-shadow:0 4px 12px rgba(0,0,0,.18);background:#dfe3ec}
@@ -168,28 +195,39 @@
   .g4tile.solved.g4-swap .q0,.g4tile.solved.g4-swap .q3{transform:none}
   @keyframes g4unswap{to{transform:none}}
   /* EINSETZEN: ein Jigsaw-Teil fliegt ins leere Feld */
-  .g4-insert .g4hole{position:absolute;width:42%;height:42%;left:29%;top:29%;background:rgba(0,0,0,.4);border:2px dashed #fff;border-radius:.4rem;transition:opacity .3s}
-  .g4-insert .g4piece{position:absolute;width:42%;height:42%;left:29%;top:29%;background-size:238% 238%;background-position:center;border-radius:.4rem;box-shadow:0 3px 8px rgba(0,0,0,.45);transform:translate(78%,-78%) rotate(14deg);opacity:0}
-  .g4tile.solving.g4-insert .g4piece{animation:g4insfly 1.4s ease-in-out .15s forwards}
-  .g4tile.solved.g4-insert .g4piece{transform:none;opacity:1}
-  .g4tile.solved.g4-insert .g4hole{opacity:0}
-  @keyframes g4insfly{0%{transform:translate(78%,-78%) rotate(14deg);opacity:0}35%{opacity:1}100%{transform:none;opacity:1}}
+  .g4-insert .g4stage{background:#dfe3ec}
+  .g4jbox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .g4jp,.g4jpslot{position:absolute}
+  .g4jp{z-index:2}
+  .g4-insert .g4jp.fly{opacity:0;transform:translate(45%,-150%) rotate(14deg);z-index:3}   /* 3 Teile liegen, das 4. fliegt rein */
+  .g4tile.solving.g4-insert .g4jp.fly{animation:g4jpfly 1.5s ease-in-out .2s forwards}
+  .g4tile.solved.g4-insert .g4jp.fly{opacity:1;transform:none}
+  @keyframes g4jpfly{0%{opacity:0;transform:translate(45%,-150%) rotate(14deg)}35%{opacity:1}100%{opacity:1;transform:none}}
   /* FREIKRATZEN: unsere lila Kratzschicht wird weggewischt */
   .g4-scratch .g4cover{position:absolute;inset:0;background:repeating-linear-gradient(50deg,#caa6e0,#caa6e0 10px,#b98fd6 10px,#b98fd6 20px)}
-  .g4tile.solving.g4-scratch .g4cover{animation:g4scr 1.4s ease-in-out .15s forwards}
-  .g4tile.solved.g4-scratch .g4cover{clip-path:inset(0 0 0 100%)}
-  @keyframes g4scr{to{clip-path:inset(0 0 0 100%)}}
+  .g4tile.solving.g4-scratch .g4cover{animation:g4scratch 1.7s ease-in-out .15s forwards}
+  .g4tile.solved.g4-scratch .g4cover{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}
+  @keyframes g4scratch{0%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}20%{clip-path:polygon(28% 0,100% 0,100% 100%,8% 100%)}40%{clip-path:polygon(22% 0,100% 0,100% 100%,46% 100%)}60%{clip-path:polygon(58% 0,100% 0,100% 100%,38% 100%)}80%{clip-path:polygon(72% 0,100% 0,100% 100%,86% 100%)}100%{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}}
+  .g4-scratch .g4scrhand{position:absolute;font-size:1.3rem;z-index:4;left:5%;top:28%;opacity:0;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+  .g4tile.solving.g4-scratch .g4scrhand{animation:g4scrhand 1.7s ease-in-out .15s forwards}
+  @keyframes g4scrhand{0%{opacity:0;left:5%;top:28%}12%{opacity:1}30%{left:52%;top:12%}50%{left:32%;top:58%}70%{left:74%;top:32%}88%{opacity:1;left:82%;top:64%}100%{opacity:0;left:96%;top:40%}}
   /* AUFFANGEN: ein Logo faellt von oben in den Korb */
   .g4-catch .g4sky{background:linear-gradient(#bfe6ff,#dff3e0)}
-  .g4-catch .g4drop{position:absolute;left:39%;top:-30%;width:22%;height:auto;z-index:2}
-  .g4tile.solving.g4-catch .g4drop{animation:g4fall 1.4s ease-in .15s forwards}
-  .g4tile.solved.g4-catch .g4drop{top:53%}
-  @keyframes g4fall{0%{top:-30%}82%,100%{top:53%}}
-  .g4-catch .g4basket{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);font-size:1.9rem;z-index:3}
+  .g4-catch .g4drop{position:absolute;width:20%;height:auto;z-index:2;opacity:0}
+  .g4-catch .g4drop.d1{left:24%;top:-28%}
+  .g4-catch .g4drop.d2{left:56%;top:-28%}
+  .g4tile.solving.g4-catch .g4drop.d1{animation:g4fall1 1.7s ease-in .15s forwards}   /* erster Stern */
+  .g4tile.solving.g4-catch .g4drop.d2{animation:g4fall2 1.7s ease-in .15s forwards}   /* weiterer Stern */
+  @keyframes g4fall1{0%{opacity:1;top:-28%}40%{top:55%}46%,100%{opacity:0;top:55%}}
+  @keyframes g4fall2{0%,42%{opacity:0;top:-28%}46%{opacity:1}88%{top:55%}94%,100%{opacity:0;top:55%}}
+  .g4-catch .g4basket{position:absolute;bottom:5%;font-size:1.9rem;z-index:3;left:22%}
+  .g4tile.solving.g4-catch .g4basket{animation:g4basket 1.7s ease-in-out .15s forwards}   /* Korb wandert vom ersten zum zweiten Stern */
+  .g4tile.solved.g4-catch .g4basket{left:54%}
+  @keyframes g4basket{0%,38%{left:22%}54%,100%{left:54%}}
   /* Feature-Leiste (Variante C): Kaertchen ziehen automatisch durch */
   .fstrip{overflow:hidden;margin-top:.7rem;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
-  .frow{display:flex;gap:.55rem;width:max-content;animation:fmarch 20s linear infinite}
-  .fcard{flex:0 0 8.6rem;background:#f7f6fc;border-radius:1.1rem;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:.85rem .55rem;text-align:center}
+  .frow{display:flex;width:max-content;animation:fmarch 30s linear infinite}
+  .fcard{flex:0 0 8.6rem;margin-right:.55rem;background:#f7f6fc;border-radius:1.1rem;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:.85rem .55rem;text-align:center}
   .fcard .fic{width:2.6rem;height:2.6rem;margin:0 auto .35rem;display:grid;place-items:center}
   .fcard .fic img{width:2.4rem;height:2.4rem;object-fit:contain}
   .fcard h3{font-size:.95rem;margin-bottom:.18rem}
@@ -203,14 +241,14 @@
   .clgrid{display:grid;gap:.4rem;grid-template-columns:1fr 1fr;grid-template-rows:1.1fr 1fr 1.1fr;grid-template-areas:"a a" "b c" "d d";height:56vh;margin-top:.5rem}
   .clpanel.area-a{grid-area:a}.clpanel.area-b{grid-area:b}.clpanel.area-c{grid-area:c}.clpanel.area-d{grid-area:d}
   .clpanel{position:relative;border:2.5px solid var(--tinte);border-radius:.6rem;overflow:hidden;display:grid;place-items:center;min-height:0;opacity:0;transform:scale(.84) rotate(-2deg) translateY(12px)}
-  .beat.on .clpanel{animation:clpop .55s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(var(--i) * .35s)}
+  .beat.on .clpanel{animation:clpop .7s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(var(--i) * .55s)}
   .clpic{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0}
-  .beat.on .clpic{animation:clkb 7s ease-out forwards;animation-delay:calc((var(--i) * .35 + .55) * 1s)}
+  .beat.on .clpic{animation:clkb 9s ease-out forwards;animation-delay:calc((var(--i) * .55 + .7) * 1s)}
   .clpanel.morn{background:linear-gradient(165deg,#a9d6ff,#ffe9b8)}
   .clpanel.night{background:linear-gradient(165deg,#3a4c84,#6c7fb8)}
   .clph{position:relative;z-index:1;font-size:2.7rem;filter:drop-shadow(0 3px 2px rgba(0,0,0,.18));opacity:.92}
-  .clbub{position:absolute;z-index:2;max-width:82%;font-weight:800;font-size:.76rem;line-height:1.12;background:#fff;color:var(--tinte);border:2px solid var(--tinte);border-radius:.55rem;padding:.24rem .42rem;box-shadow:0 2px 0 rgba(27,27,47,.5);opacity:0;transform:scale(.6)}
-  .beat.on .clbub{animation:clbub .42s cubic-bezier(.2,1.7,.4,1) forwards;animation-delay:calc((var(--i) * .35 + .5) * 1s)}
+  .clbub{position:absolute;z-index:2;max-width:90%;font-weight:700;font-size:.72rem;line-height:1.18;background:#fff;color:var(--tinte);border:2px solid var(--tinte);border-radius:.55rem;padding:.26rem .44rem;box-shadow:0 2px 0 rgba(27,27,47,.5);opacity:0;transform:scale(.6)}
+  .beat.on .clbub{animation:clbub .42s cubic-bezier(.2,1.7,.4,1) forwards;animation-delay:calc((var(--i) * .55 + .65) * 1s)}
   .clbub.tl{top:.3rem;left:.3rem}
   .clbub.br{right:.3rem;bottom:.3rem;background:var(--gelb)}
   .clbub.shout{background:var(--rosa);color:#fff;border-color:#a82018}
@@ -218,7 +256,9 @@
   @keyframes clkb{to{transform:scale(1.08)}}
   @keyframes clbub{to{opacity:1;transform:none}}
   /* Sicher & Fair -- urspruengliche Farben (Verlauf indigo->pink, weisse Pillen) */
-  .safebox{background:linear-gradient(135deg,var(--indigo),var(--pink));color:#fff;border-radius:1.2rem;padding:1.3rem 1.1rem;margin:-.2rem -.1rem .1rem}
+  .beat.safebeat{background:none;box-shadow:none;padding:0;width:min(91%,360px)}   /* nur das farbige Popup, keine weisse Huelle (Gerit) */
+  .beat.lnar{width:min(74%,262px)}   /* Landschafts-Popup schmaler */
+  .safebox{background:linear-gradient(135deg,var(--indigo),var(--pink));color:#fff;border-radius:1.6rem;padding:1.6rem 1.2rem;margin:0;box-shadow:0 18px 50px rgba(0,0,0,.28)}
   .safebox h2{font-size:1.45rem;color:#fff}
   .safebox .sub{color:#fff;opacity:.95}
   .safegrid{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin-top:.7rem}
@@ -239,8 +279,6 @@
 <audio id="bgm" src="audio/musik.mp3" loop preload="none"></audio>
 <div id="lang"><button data-l="de">DE</button><button data-l="en">EN</button><button data-l="gr">GR</button></div>
 <div id="prog"></div>
-<a id="cta" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App holen</a>
-
 <div class="hud" id="hud">
   <a class="hudblock" id="hudlink" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener" aria-label="kidzlist – App holen">
     <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
@@ -409,34 +447,92 @@ const EXTRA={
 Object.keys(EXTRA).forEach(l=>Object.assign(T[l],EXTRA[l]));
 // Variante C: Feature-Leiste (Karussell)
 const EXTRA2={
- de:{leiste_h:"Was Kidzlist alles kann",fp_sammeln:"Beide Routinen = ein Logo.",fp_weish:"Zum Vorlesen, morgens & abends.",fp_team:"Mehrere Kinder, ein Gerät.",fp_plan:"Frei für besondere Tage."},
- en:{leiste_h:"All Kidzlist can do",fp_sammeln:"Both routines = one logo.",fp_weish:"To read aloud, day & night.",fp_team:"Several kids, one device.",fp_plan:"Free for special days."},
- gr:{leiste_h:"Τι κάνει το Kidzlist",fp_sammeln:"Δύο ρουτίνες = ένα λογότυπο.",fp_weish:"Για ανάγνωση, πρωί & βράδυ.",fp_team:"Πολλά παιδιά, μία συσκευή.",fp_plan:"Για ξεχωριστές μέρες."}
+ de:{leiste_h:"Was Kidzlist alles kann",fp_sammeln:"Beide Routinen = ein Logo.",fp_weish:"Zum Vorlesen, morgens & abends.",fp_team:"Mehrere Kinder, ein Gerät.",fp_plan:"Frei für besondere Tage.",fl_char:"Charaktere",fp_char:"Charakter + Farbe pro Kind.",fl_musik:"Musik",fp_musik:"Sanfte Routine-Musik.",fl_foto:"Eigene Fotos",fp_foto:"Eigene Bilder als Aufgabe.",fl_spiele:"Vier Spiele",fp_spiele:"Belohnung zum Ausgeben."},
+ en:{leiste_h:"All Kidzlist can do",fp_sammeln:"Both routines = one logo.",fp_weish:"To read aloud, day & night.",fp_team:"Several kids, one device.",fp_plan:"Free for special days.",fl_char:"Characters",fp_char:"Character + colour per child.",fl_musik:"Music",fp_musik:"Gentle routine music.",fl_foto:"Own photos",fp_foto:"Your own pictures as tasks.",fl_spiele:"Four games",fp_spiele:"Rewards to spend."},
+ gr:{leiste_h:"Τι κάνει το Kidzlist",fp_sammeln:"Δύο ρουτίνες = ένα λογότυπο.",fp_weish:"Για ανάγνωση, πρωί & βράδυ.",fp_team:"Πολλά παιδιά, μία συσκευή.",fp_plan:"Για ξεχωριστές μέρες.",fl_char:"Χαρακτήρες",fp_char:"Χαρακτήρας + χρώμα ανά παιδί.",fl_musik:"Μουσική",fp_musik:"Απαλή μουσική ρουτίνας.",fl_foto:"Δικές σου φωτό",fp_foto:"Δικές σου εικόνες ως δουλειές.",fl_spiele:"Τέσσερα παιχνίδια",fp_spiele:"Επιβράβευση για ξόδεμα."}
 };
 Object.keys(EXTRA2).forEach(l=>Object.assign(T[l],EXTRA2[l]));
+// Logo-Sammel-Anzeige in der Routine-Demo (aus index_flat)
+const EXTRA3={
+ de:{rt_logo:"Dein Logo:",rt_win:"Geschafft! So sammelt dein Kind jeden Tag. 🎉"},
+ en:{rt_logo:"Your logo:",rt_win:"Done! That's how your child collects every day. 🎉"},
+ gr:{rt_logo:"Το λογότυπό σου:",rt_win:"Έτοιμο! Έτσι μαζεύει το παιδί σου κάθε μέρα. 🎉"}
+};
+Object.keys(EXTRA3).forEach(l=>Object.assign(T[l],EXTRA3[l]));
+// Authentischere Comic-Dialoge (echte Konversation) + drei belegte Studien
+const EXTRA4={
+ de:{comic_wake:"Auf geht's, Schatz! Wir müssen uns anziehen, sonst kommen wir zu spät.",comic_no:"Nein! Ich will mich jetzt nicht anziehen!",
+   comic_sleep:"Komm, mein Schatz, es ist wirklich Zeit fürs Bett.",comic_more:"Och nö, nur noch ein kleines bisschen spielen, bitte!",
+   comic_morningroutine:"Schau mal, ich mach meine Morgenroutine ganz allein!",comic_logo:"Juhuu, ich hab einen Stern bekommen!",
+   comic_routine:"Jetzt noch die Abendroutine, dann hab ich heute alles geschafft!",comic_done:"Fertig! Und ich freu mich schon auf morgen!",
+   study_h:"Warum spielerische Routinen wirken",study1:"der Eltern kämpfen morgens mit der Routine",study1s:"Indeed-Elternumfrage",
+   study2:"der Eltern ringen abends mit dem Zubettgehen",study2s:"C.S. Mott Children's Hospital",
+   study3:"Sterne sammeln motiviert – von Kinderärzten empfohlen",study3s:"American Academy of Pediatrics"},
+ en:{comic_wake:"Come on, sweetie! Let's get dressed or we'll be late.",comic_no:"No! I don't want to get dressed right now!",
+   comic_sleep:"Come on, darling, it's really time for bed.",comic_more:"Aw, just a little bit longer, please!",
+   comic_morningroutine:"Look, I'm doing my morning routine all by myself!",comic_logo:"Yay, I got a star!",
+   comic_routine:"Now the evening routine, and I've done everything today!",comic_done:"All done! And I can't wait for tomorrow!",
+   study_h:"Why playful routines work",study1:"of parents struggle with the morning routine",study1s:"Indeed parent survey",
+   study2:"of parents struggle with bedtime",study2s:"C.S. Mott Children's Hospital",
+   study3:"Collecting stars motivates – recommended by pediatricians",study3s:"American Academy of Pediatrics"},
+ gr:{comic_wake:"Έλα, αγάπη μου! Πρέπει να ντυθούμε, αλλιώς θα αργήσουμε.",comic_no:"Όχι! Δεν θέλω να ντυθώ τώρα!",
+   comic_sleep:"Έλα, καρδιά μου, ήρθε πραγματικά η ώρα για ύπνο.",comic_more:"Όχι, λίγο ακόμα να παίξω, σε παρακαλώ!",
+   comic_morningroutine:"Κοίτα, κάνω μόνος μου την πρωινή ρουτίνα!",comic_logo:"Ναι! Πήρα ένα αστέρι!",
+   comic_routine:"Τώρα η βραδινή ρουτίνα, και τα κατάφερα όλα σήμερα!",comic_done:"Έτοιμο! Και ανυπομονώ για αύριο!",
+   study_h:"Γιατί πετυχαίνουν οι παιχνιδιάρικες ρουτίνες",study1:"των γονιών παλεύουν με την πρωινή ρουτίνα",study1s:"Έρευνα γονιών Indeed",
+   study2:"των γονιών δυσκολεύονται με τον ύπνο",study2s:"C.S. Mott Children's Hospital",
+   study3:"Η συλλογή αστεριών παρακινεί – προτείνεται από παιδιάτρους",study3s:"American Academy of Pediatrics"}
+};
+Object.keys(EXTRA4).forEach(l=>Object.assign(T[l],EXTRA4[l]));
+// Gruppen-Ueberschriften im Studien-Popup (Problem -> Loesung)
+const EXTRA5={
+ de:{studygh1:"Eltern kämpfen mit der Routine ihrer Kinder",studygh2:"Gamification / Belohnung erhöht die Motivation"},
+ en:{studygh1:"Parents struggle with their children's routine",studygh2:"Gamification / rewards boost motivation"},
+ gr:{studygh1:"Οι γονείς παλεύουν με τη ρουτίνα των παιδιών",studygh2:"Το παιχνίδι / η επιβράβευση αυξάνει τα κίνητρα"}
+};
+Object.keys(EXTRA5).forEach(l=>Object.assign(T[l],EXTRA5[l]));
+// Comic-Ueberschriften (caps) angepasst
+const EXTRA6={
+ de:{cap1:"Die Morgenroutine kann echt herausfordernd sein",cap2:"Die Abendroutine auch",cap3:"Mit Kidzlist werden die Routinen zum Spiel"},
+ en:{cap1:"The morning routine can be a real challenge",cap2:"And so can the evening routine",cap3:"With Kidzlist routines become a game"},
+ gr:{cap1:"Η πρωινή ρουτίνα μπορεί να είναι πρόκληση",cap2:"Και η βραδινή ρουτίνα επίσης",cap3:"Με το Kidzlist οι ρουτίνες γίνονται παιχνίδι"}
+};
+Object.keys(EXTRA6).forEach(l=>Object.assign(T[l],EXTRA6[l]));
 // Vier Feature-Kaertchen fuer die Leiste (doppelt gerendert -> nahtlose Endlos-Schleife)
-const FCARDS=t=>`<div class="fcard"><div class="fic"><img src="${IMG}logos/2b50.webp" alt=""></div><h3>${t.sammeln_h}</h3><p>${t.fp_sammeln}</p></div><div class="fcard"><div class="fic"><img src="${IMG}tasks/1f4d6.webp" alt=""></div><h3>${t.weish_h}</h3><p>${t.fp_weish}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/team.webp" alt=""></div><h3>${t.team_h}</h3><p>${t.fp_team}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/kalender.webp" alt=""></div><h3>${t.plan_h}</h3><p>${t.fp_plan}</p></div>`;
-let L=({el:'gr',en:'en',de:'de'})[(navigator.language||'de').slice(0,2).toLowerCase()]||'de';
+const FCARDS=t=>`<div class="fcard"><div class="fic"><img src="${IMG}logos/2b50.webp" alt=""></div><h3>${t.sammeln_h}</h3><p>${t.fp_sammeln}</p></div><div class="fcard"><div class="fic"><img src="${IMG}tasks/1f4d6.webp" alt=""></div><h3>${t.weish_h}</h3><p>${t.fp_weish}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/team.webp" alt=""></div><h3>${t.team_h}</h3><p>${t.fp_team}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/kalender.webp" alt=""></div><h3>${t.plan_h}</h3><p>${t.fp_plan}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/profil.webp" alt=""></div><h3>${t.fl_char}</h3><p>${t.fp_char}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/musik.webp" alt=""></div><h3>${t.fl_musik}</h3><p>${t.fp_musik}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/kamera.webp" alt=""></div><h3>${t.fl_foto}</h3><p>${t.fp_foto}</p></div><div class="fcard"><div class="fic"><img src="${IMG}ui/wuerfel.webp" alt=""></div><h3>${t.fl_spiele}</h3><p>${t.fp_spiele}</p></div>`;
+// Sprache nach STANDORT voreinstellen ("von wo man ins Internet geht"): Zeitzone zuerst
+// (Deutschland -> DE, Griechenland -> GR), Browser-Sprache als Rueckfall, sonst Englisch. (Gerit 2026-06-28)
+function pickLang(){
+  let tz='';try{tz=(Intl.DateTimeFormat().resolvedOptions().timeZone||'');}catch(e){}
+  if(tz==='Europe/Athens') return 'gr';
+  if(tz==='Europe/Berlin'||tz==='Europe/Busingen') return 'de';
+  const lang=(navigator.language||'').toLowerCase();
+  if(lang.startsWith('el')) return 'gr';
+  if(lang.startsWith('de')) return 'de';
+  return 'en';
+}
+let L=pickLang();
 let TT=T[L];
 function makeBeats(t){return[
  {pos:'mid',clast:1,html:`<div class="clpage"><div class="clband">${t.cap1}</div><div class="clgrid"><div class="clpanel morn area-a" data-img="comic/morgen-problem-1" style="--i:0"><div class="clpic"></div><span class="clph">🛏️</span><div class="clbub tl">${t.comic_wake}</div></div><div class="clpanel morn area-b" data-img="comic/morgen-problem-2" style="--i:1"><div class="clpic"></div><span class="clph">🙅</span><div class="clbub br shout">${t.comic_no}</div></div><div class="clpanel night area-c" data-img="comic/abend-problem-1" style="--i:2"><div class="clpic"></div><span class="clph">🧸</span><div class="clbub tl">${t.comic_sleep}</div></div><div class="clpanel night area-d" data-img="comic/abend-problem-2" style="--i:3"><div class="clpic"></div><span class="clph">😫</span><div class="clbub br shout">${t.comic_more}</div></div></div><div class="clband bot">${t.cap2}</div></div>`},
- {pos:'mid',html:`<div class="study"><img class="studyimg" src="${IMG}logos/2b50.webp" alt=""><p class="sub">${t.study_txt}</p><div class="ssrc">${t.study_src}</div></div><div class="weiter">⌄</div>`},
+ {pos:'mid',html:`<div class="studygrid"><h3 class="studygh prob">${t.studygh1}</h3><div class="studycard sc1"><div class="snum">60%</div><div class="stxt"><p>${t.study1}</p><div class="ssrc">${t.study1s}</div></div></div><div class="studycard sc2"><div class="snum">27%</div><div class="stxt"><p>${t.study2}</p><div class="ssrc">${t.study2s}</div></div></div><h3 class="studygh sol">${t.studygh2}</h3><div class="studycard sc3"><div class="snum">⭐</div><div class="stxt"><p>${t.study3}</p><div class="ssrc">${t.study3s}</div></div></div></div><div class="weiter">⌄</div>`},
  {pos:'mid',clast:1,html:`<div class="clpage"><div class="clband">${t.cap3}</div><div class="clgrid"><div class="clpanel morn area-a" data-img="comic/morgen-app-1" style="--i:0"><div class="clpic"></div><span class="clph">📱</span><div class="clbub tl">${t.comic_morningroutine}</div></div><div class="clpanel morn area-b" data-img="comic/morgen-app-2" style="--i:1"><div class="clpic"></div><span class="clph">⭐</span><div class="clbub br">${t.comic_logo}</div></div><div class="clpanel night area-c" data-img="comic/abend-app-1" style="--i:2"><div class="clpic"></div><span class="clph">🌙</span><div class="clbub tl">${t.comic_routine}</div></div><div class="clpanel night area-d" data-img="comic/abend-app-2" style="--i:3"><div class="clpic"></div><span class="clph">🏆</span><div class="clbub br">${t.comic_done}</div></div></div><div class="clband bot">${t.cap4}</div></div>`},
+ {pos:'mid',html:`${LOGO}<p class="sub">${t.intro_sub}</p>${STORES}<div class="weiter">${t.intro_w}</div>`},
  {pos:'mid',html:`<h2>${t.chars_h}</h2><p class="sub">${t.chars_sub}</p><div class="chwrap"><div class="chrow2 r" id="chrowA"></div><div class="chrow2 l" id="chrowB"></div></div>`},
  {pos:'mid',landseq:true,html:`<div class="lseq" id="lseq"><div class="lsphoto on" style="background-image:url('${IMG}land/juni-tag.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/juni-nacht.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/dez-nacht.webp')"></div><div class="lsphoto" style="background-image:url('${IMG}land/dez-tag.webp')"></div></div><div class="lscap" id="lscap">${t.ls1}</div>`},
- {pos:'mid',routineseq:true,html:`<div class="rtblock" id="rtMorgenBlock"><h2 class="rth">${t.morgen_h}</h2><p class="sub rtsub">${t.rt_intro_m}</p><div class="rt rt4" id="rtMorgen"></div></div><div class="rtblock dimmed" id="rtAbendBlock"><h2 class="rth">${t.abend_h}</h2><p class="sub rtsub">${t.rt_intro_e}</p><div class="rt rt4" id="rtAbend"></div></div>`},
+ {pos:'mid',routineseq:true,html:`<div class="rtblock" id="rtMorgenBlock"><h2 class="rth">${t.morgen_h}</h2><p class="sub rtsub">${t.rt_intro_m}</p><div class="rt rt4" id="rtMorgen"></div></div><div class="rtblock dimmed" id="rtAbendBlock"><h2 class="rth">${t.abend_h}</h2><p class="sub rtsub">${t.rt_intro_e}</p><div class="rt rt4" id="rtAbend"></div></div><div class="rt-stand"><span>${t.rt_logo}</span><div class="rt-coin" id="rtCoin"><img src="${IMG}logos/2b50.webp" alt=""></div></div><div class="rt-win" id="rtWin"></div>`},
  {pos:'mid',html:`<h2>${t.leiste_h}</h2><div class="fstrip"><div class="frow">${FCARDS(t)}${FCARDS(t)}</div></div>`},
  {pos:'mid',games4:true,html:`<h2>${t.spiele_h}</h2><p class="sub">${t.eigene_bilder}</p><div class="g4grid" id="g4grid"></div><div class="g4hint" id="g4hint">${t.spiele_tap}</div>`},
- {pos:'mid',html:`<div class="safebox"><h2>${t.safe_h}</h2><p class="sub" style="font-weight:700;opacity:.95">${t.safe_sub}</p><div class="safegrid"><div>${t.safe1}</div><div>${t.safe2}</div><div>${t.safe3}</div><div>${t.safe4}</div><div>${t.safe5}</div></div></div><div class="weiter">⌄</div>`}
+ {pos:'mid',safe:true,html:`<div class="safebox"><h2>${t.safe_h}</h2><p class="sub" style="font-weight:700;opacity:.95">${t.safe_sub}</p><div class="safegrid"><div>${t.safe1}</div><div>${t.safe2}</div><div>${t.safe3}</div><div>${t.safe4}</div><div>${t.safe5}</div></div></div>`}
 ];}
 const BEATS=makeBeats(TT);
 
 const ov=document.getElementById('ov');
-BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat pos-'+b.pos+(b.clast?' clast':'');d.id='b'+i;d.innerHTML=b.html;ov.appendChild(d);b.el=d;});
+BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat pos-'+b.pos+(b.clast?' clast':'')+(b.landseq?' lnar':'')+(b.safe?' safebeat':'');d.id='b'+i;d.innerHTML=b.html;ov.appendChild(d);b.el=d;});
 // Abstaende grosszuegig verteilen (Landschaft laenger, Spiele klar getrennt -> kein Ueberlappen)
 // 10 Beats, grosszuegig verteilt -> mehr sichtbare Fahrt dazwischen (entspannte Reise, Gerit 2026-06-28)
-[0,0.11,0.22,0.33,0.44,0.56,0.67,0.79,0.90].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});
-[0,2,3,4,5,7,8].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routine/Spiele/Sicher&Fair): erst naeher am Punkt -> mehr Wolke davor
+[0,0.10,0.20,0.30,0.40,0.50,0.61,0.71,0.81,0.91].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});
+[0,2,4,5,6,8,9].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routine/Spiele/Sicher&Fair); Logo-Willkommen (3) klein
 
 // Routinen + Charaktere fuellen (sprachabhaengig), Popup-Texte, Sprachwechsel
 function fillRoutine(boxId,tasks){const box=document.getElementById(boxId);if(!box)return;box.innerHTML='';
@@ -453,7 +549,7 @@ function runLandSeq(){if(landSeqRun)return;landSeqRun=true;
   const ph=[...document.querySelectorAll('#lseq .lsphoto')],cap=document.getElementById('lscap');if(!ph.length)return;
   const steps=()=>[TT.ls1,TT.ls2,TT.ls3,TT.ls4];
   const show=i=>{ph.forEach((p,k)=>p.classList.toggle('on',k===i));cap.classList.remove('in');void cap.offsetWidth;cap.textContent=steps()[i];cap.classList.add('in');};
-  show(0);[1,2,3].forEach(i=>landTimers.push(setTimeout(()=>show(i),i*3000)));   // je 3s: 2s zeigen + 1s weiche Ueberblendung (CSS)
+  show(0);[1,2,3].forEach(i=>landTimers.push(setTimeout(()=>show(i),i*2000)));   // je 2s: schnelleres Umschalten (Gerit 2026-06-28)
 }
 function resetLandSeq(){landSeqRun=false;landTimers.forEach(clearTimeout);landTimers=[];
   document.querySelectorAll('#lseq .lsphoto').forEach((p,k)=>p.classList.toggle('on',k===0));
@@ -462,34 +558,52 @@ function resetLandSeq(){landSeqRun=false;landTimers.forEach(clearTimeout);landTi
 // ===== Routine-Demo (Auto): Morgen abhaken, dann Abend einblenden + abhaken =====
 let routineSeqRun=false,rtTimers=[];
 function runRoutineSeq(){if(routineSeqRun)return;routineSeqRun=true;
-  const ab=document.getElementById('rtAbendBlock');
+  const ab=document.getElementById('rtAbendBlock'),coin=document.getElementById('rtCoin'),win=document.getElementById('rtWin');
   const mt=[...document.querySelectorAll('#rtMorgen .t')],at=[...document.querySelectorAll('#rtAbend .t')];
-  let d=700;
-  mt.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*850)));
-  d+=mt.length*850+700;
-  rtTimers.push(setTimeout(()=>{if(ab)ab.classList.remove('dimmed');},d));d+=700;
-  at.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*850)));
+  const setCoin=p=>{if(coin)coin.style.background=`conic-gradient(var(--gelb) ${p}%,#f4f6fb ${p}%)`;};
+  let d=450;
+  mt.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*520)));
+  d+=mt.length*520+250;
+  rtTimers.push(setTimeout(()=>setCoin(50),d));   // obere 4 fertig -> Logo halb voll
+  d+=450;
+  rtTimers.push(setTimeout(()=>{if(ab)ab.classList.remove('dimmed');},d));d+=450;
+  at.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*520)));
+  d+=at.length*520+250;
+  rtTimers.push(setTimeout(()=>{setCoin(100);if(win){win.textContent=TT.rt_win;win.classList.add('show');}konf();},d));   // untere 4 fertig -> Logo voll + "Geschafft" + Konfetti
 }
 function resetRoutineSeq(){routineSeqRun=false;rtTimers.forEach(clearTimeout);rtTimers=[];
   document.querySelectorAll('#rtMorgen .t,#rtAbend .t').forEach(e=>e.classList.remove('ok'));
-  const ab=document.getElementById('rtAbendBlock');if(ab)ab.classList.add('dimmed');}
+  const ab=document.getElementById('rtAbendBlock');if(ab)ab.classList.add('dimmed');
+  const coin=document.getElementById('rtCoin');if(coin)coin.style.background='conic-gradient(var(--gelb) 0%,#f4f6fb 0%)';
+  const win=document.getElementById('rtWin');if(win){win.classList.remove('show');win.textContent='';}}
 
 // ===== Spiele 2x2: Vorschau (ausgegraut) -> spielt sich nacheinander vor (farbig) -> Klick startet das echte Spiel =====
 const G4=[{k:'swap',label:'g_swap',img:'puzzle/maerchen/01'},{k:'insert',label:'g_insert',img:'puzzle/helden/01'},{k:'scratch',label:'g_scratch',img:'puzzle/tiere/01'},{k:'catch',label:'g_catch',img:'logos/2b50'}];
+// 2x2-Jigsaw mit echten Puzzle-Konturen fuer die Vorschau (nutzt jpEdges/jpPath wie das echte Einsetzen-Spiel; das 4. Teil fliegt rein)
+function g4InsertHTML(url){
+  const n=2,cell=44,m=Math.round(cell*0.26),piece=cell+2*m,bs=cell*n,id=++JPID;
+  const E=jpEdges(n),paths={};
+  for(let idx=0;idx<n*n;idx++)paths[idx]=jpPath(cell,m,E[idx]);
+  const pc=(idx,fly)=>{const r=Math.floor(idx/n),c=idx%n,ix=(-c*cell+m).toFixed(1),iy=(-r*cell+m).toFixed(1),left=c*cell-m,top=r*cell-m;
+    return `<svg class="g4jp${fly?' fly':''}" style="left:${left}px;top:${top}px" width="${piece}" height="${piece}" viewBox="0 0 ${piece} ${piece}"><defs><clipPath id="g4c${id}_${idx}"><path d="${paths[idx]}"/></clipPath></defs><g clip-path="url(#g4c${id}_${idx})"><image href="${url}" x="${ix}" y="${iy}" width="${bs}" height="${bs}" preserveAspectRatio="xMidYMid slice"/></g><path d="${paths[idx]}" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1.3"/></svg>`;};
+  let slots='';for(let idx=0;idx<n*n;idx++){const r=Math.floor(idx/n),c=idx%n;slots+=`<svg class="g4jpslot" style="left:${c*cell-m}px;top:${r*cell-m}px" width="${piece}" height="${piece}"><path d="${paths[idx]}" fill="rgba(0,0,0,.07)" stroke="rgba(0,0,0,.28)" stroke-width="1.2" stroke-dasharray="4 3"/></svg>`;}
+  let pieces='';for(let idx=0;idx<n*n;idx++)pieces+=pc(idx,idx===n*n-1);   // letztes Teil fliegt
+  return `<div class="g4jbox" style="width:${bs}px;height:${bs}px">${slots}${pieces}</div>`;
+}
 function fillGames4(){const g=document.getElementById('g4grid');if(!g)return;
   g.innerHTML=G4.map(it=>{const url=IMG+it.img+'.webp';let pre='';
     // Vorschau zeigt die ECHTE Mechanik unserer Spiele (Gerit 2026-06-28):
     if(it.k==='swap')pre=`<div class="g4swap"><div class="g4q q0" style="background-image:url('${url}')"></div><div class="g4q q1" style="background-image:url('${url}')"></div><div class="g4q q2" style="background-image:url('${url}')"></div><div class="g4q q3" style="background-image:url('${url}')"></div></div>`;   // 2x2-Tauschen
-    else if(it.k==='insert')pre=`<div class="g4pic" style="background-image:url('${url}')"></div><div class="g4hole"></div><div class="g4piece" style="background-image:url('${url}')"></div>`;   // Jigsaw-Teil einsetzen
-    else if(it.k==='scratch')pre=`<div class="g4pic" style="background-image:url('${url}')"></div><div class="g4cover"></div>`;   // lila Kratzschicht
-    else pre=`<div class="g4pic g4sky"></div><img class="g4drop" src="${url}" alt=""><div class="g4basket">🧺</div>`;   // Korb faengt Logo
+    else if(it.k==='insert')pre=g4InsertHTML(url);   // 2x2-Jigsaw mit echten Puzzle-Konturen
+    else if(it.k==='scratch')pre=`<div class="g4pic" style="background-image:url('${url}')"></div><div class="g4cover"></div><span class="g4scrhand">✋</span>`;   // lila Kratzschicht + Kratzhand
+    else pre=`<div class="g4pic g4sky"></div><img class="g4drop d1" src="${url}" alt=""><img class="g4drop d2" src="${url}" alt=""><div class="g4basket">🧺</div>`;   // Korb faengt zwei Sterne nacheinander
     return `<div class="g4tile g4-${it.k}" data-k="${it.k}" onclick="openGame('${it.k}')"><div class="g4stage">${pre}</div><div class="g4lbl">${TT[it.label]}</div><div class="g4check">✓</div></div>`;}).join('');
 }
 let games4Run=false,g4Timers=[];
 function runGames4Seq(){if(games4Run)return;games4Run=true;
   const tiles=[...document.querySelectorAll('#g4grid .g4tile')];
   tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.add('solving');
-    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},1700));},700+i*2100));});
+    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},2000));},700+i*2400));});
 }
 function resetGames4(){games4Run=false;g4Timers.forEach(clearTimeout);g4Timers=[];
   document.querySelectorAll('#g4grid .g4tile').forEach(t=>t.classList.remove('solving','solved'));}
@@ -513,7 +627,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';scrollTo(0,
 let curT=0,tgtT=0,waveOn=false,curBeat=0,musikAuto=false;
 const NB=BEATS.length,HALF=0.024;
 const GAMES={swap:gSwap,insert:gInsert,scratch:gScratch,catch:gCatch};
-function goBeat(dir){const n=Math.max(0,Math.min(NB,curBeat+dir));if(n===curBeat)return;curBeat=n;tgtT=(curBeat>=NB)?1:BEATS[curBeat].at;}
+function goBeat(dir){if(document.getElementById('gameModal').classList.contains('on'))return;const n=Math.max(0,Math.min(NB,curBeat+dir));if(n===curBeat)return;curBeat=n;tgtT=(curBeat>=NB)?1:BEATS[curBeat].at;}   // Fahrt steht still, solange ein Spiel offen ist (Gerit 2026-06-28)
 function updateBeats(t){
   BEATS.forEach(b=>{
     if(b.won){b.el.style.opacity='0';b.el.classList.remove('on');return;}
@@ -528,10 +642,9 @@ function updateBeats(t){
   for(const b of BEATS){if(!b.game)continue;
     if(b===bg&&bd<0.013&&!b.won){if(!b.live){b.live=true;b.clean=GAMES[b.game](b.el.querySelector('.gstage'),IMG+b.img+'.webp',b.el.querySelector('.gmsg'),b);}}
     else if(b.live){b.live=false;if(b.clean){b.clean();b.clean=null;}const gm=b.el.querySelector('.gmsg');if(gm)gm.textContent='';}}
-  document.getElementById('hud').classList.toggle('on',t>0.05&&t<0.95);
+  document.getElementById('hud').classList.toggle('on',t<0.95);   // kidzlist-Kopf durchgehend, auch beim ersten Comic (Gerit 2026-06-28)
   document.getElementById('hint').style.opacity=(t>0.92||curBeat>=NB-2)?'0':'.45';
   document.getElementById('prog').style.transform='scaleX('+t+')';
-  document.getElementById('cta').classList.toggle('on',t>0.3&&t<0.92);
   // Musik startet automatisch nach den Comics, sobald die Reise im Hauptteil ist (Gerit 2026-06-28).
   // Greift nur, wenn der Nutzer den Ton nicht schon selbst gesetzt hat; per Geste (Wischen) ist play() erlaubt.
   if(!musikAuto&&t>0.24){const a=document.getElementById('bgm');if(a&&a.paused){musikAuto=true;a.play().then(()=>setSnd(true)).catch(()=>{});}}
