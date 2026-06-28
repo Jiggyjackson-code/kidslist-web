@@ -171,7 +171,7 @@
   .rt4 .t .l{font-size:.52rem}
   /* Logo-Sammel-Anzeige (aus index_flat): fuellt sich halb nach Morgen, voll nach Abend */
   .rt-stand{display:flex;align-items:center;justify-content:center;gap:.7rem;font-weight:700;margin-top:.8rem}
-  .rt-coin{width:3rem;height:3rem;border-radius:50%;border:3px solid var(--gelb);display:grid;place-items:center;background:conic-gradient(var(--gelb) 0%,#f4f6fb 0%);transition:background .5s}
+  .rt-coin{width:3rem;height:3rem;border-radius:50%;border:3px solid var(--gelb);display:grid;place-items:center;background:linear-gradient(90deg,var(--gelb) 0%,#f4f6fb 0%);transition:background .5s;overflow:hidden}
   .rt-coin img{width:1.7rem;height:1.7rem;object-fit:contain}
   .rt-win{min-height:1.3rem;margin-top:.5rem;font-weight:700;color:var(--gruen);opacity:0;transform:translateY(8px);transition:.4s;text-align:center;font-size:.95rem}
   .rt-win.show{opacity:1;transform:none}
@@ -560,7 +560,7 @@ let routineSeqRun=false,rtTimers=[];
 function runRoutineSeq(){if(routineSeqRun)return;routineSeqRun=true;
   const ab=document.getElementById('rtAbendBlock'),coin=document.getElementById('rtCoin'),win=document.getElementById('rtWin');
   const mt=[...document.querySelectorAll('#rtMorgen .t')],at=[...document.querySelectorAll('#rtAbend .t')];
-  const setCoin=p=>{if(coin)coin.style.background=`conic-gradient(var(--gelb) ${p}%,#f4f6fb ${p}%)`;};
+  const setCoin=p=>{if(coin)coin.style.background=`linear-gradient(90deg,var(--gelb) ${p}%,#f4f6fb ${p}%)`;};   // links zuerst (Morgen=linke Haelfte), dann rechts (Abend)
   let d=450;
   mt.forEach((e,i)=>rtTimers.push(setTimeout(()=>{e.classList.add('ok');},d+i*520)));
   d+=mt.length*520+250;
@@ -574,7 +574,7 @@ function runRoutineSeq(){if(routineSeqRun)return;routineSeqRun=true;
 function resetRoutineSeq(){routineSeqRun=false;rtTimers.forEach(clearTimeout);rtTimers=[];
   document.querySelectorAll('#rtMorgen .t,#rtAbend .t').forEach(e=>e.classList.remove('ok'));
   const ab=document.getElementById('rtAbendBlock');if(ab)ab.classList.add('dimmed');
-  const coin=document.getElementById('rtCoin');if(coin)coin.style.background='conic-gradient(var(--gelb) 0%,#f4f6fb 0%)';
+  const coin=document.getElementById('rtCoin');if(coin)coin.style.background='linear-gradient(90deg,var(--gelb) 0%,#f4f6fb 0%)';
   const win=document.getElementById('rtWin');if(win){win.classList.remove('show');win.textContent='';}}
 
 // ===== Spiele 2x2: Vorschau (ausgegraut) -> spielt sich nacheinander vor (farbig) -> Klick startet das echte Spiel =====
@@ -582,7 +582,7 @@ const G4=[{k:'swap',label:'g_swap',img:'puzzle/maerchen/01'},{k:'insert',label:'
 // 2x2-Jigsaw mit echten Puzzle-Konturen fuer die Vorschau (nutzt jpEdges/jpPath wie das echte Einsetzen-Spiel; das 4. Teil fliegt rein)
 let G4JID=0;   // eigener Zaehler -- NICHT das weiter unten per let deklarierte JPID (sonst TDZ beim ersten Render, Lehre #139)
 function g4InsertHTML(url){
-  const n=2,cell=44,m=Math.round(cell*0.26),piece=cell+2*m,bs=cell*n,id=++G4JID;
+  const n=2,cell=64,m=Math.round(cell*0.26),piece=cell+2*m,bs=cell*n,id=++G4JID;   // groesser, passt zu den anderen Spiele-Vorschauen
   const E=jpEdges(n),paths={};
   for(let idx=0;idx<n*n;idx++)paths[idx]=jpPath(cell,m,E[idx]);
   const pc=(idx,fly)=>{const r=Math.floor(idx/n),c=idx%n,ix=(-c*cell+m).toFixed(1),iy=(-r*cell+m).toFixed(1),left=c*cell-m,top=r*cell-m;
