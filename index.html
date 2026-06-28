@@ -750,11 +750,11 @@ function konfBoom(){for(let i=0;i<130;i++){const k=document.createElement('div')
   k.style.left='50vw';k.style.top='52vh';k.style.background=KCOLS[i%7];k.style.setProperty('--tx',(Math.cos(ang)*dist)+'vw');k.style.setProperty('--ty',(Math.sin(ang)*dist)+'vh');
   k.style.animation=`boom ${1+Math.random()*0.9}s ease-out forwards`;document.body.appendChild(k);setTimeout(()=>k.remove(),2200);}}
 // Hintergrund-Musik aus der App (an/aus per Knopf; startet auf Klick wegen Autoplay-Regeln)
-const bgm=document.getElementById('bgm');bgm.volume=0.055;   // Fallback (iOS ignoriert audio.volume -> Web-Audio-Gain unten steuert die Lautstaerke)
+const bgm=document.getElementById('bgm');bgm.volume=0.2;   // Fallback (iOS ignoriert audio.volume -> Web-Audio-Gain unten steuert die Lautstaerke)
 const sndBtn=document.getElementById('snd');
 function setSnd(an){const im=sndBtn.querySelector('img');if(im)im.src=IMG+'ui/'+(an?'lautsprecher':'lautsprecher_aus')+'.webp';}
 // iOS Safari steuert die Lautstaerke NICHT ueber audio.volume -- daher die Musik durch einen Web-Audio-GainNode leiten (Gerit 2026-06-28)
-const BGM_VOL=0.055; let audioCtx=null,bgmGain=null;
+const BGM_VOL=0.2; let audioCtx=null,bgmGain=null;
 function wireBgm(){ if(audioCtx)return;
   try{ const AC=window.AudioContext||window.webkitAudioContext; if(!AC){bgm.volume=BGM_VOL;return;}
     audioCtx=new AC(); const src=audioCtx.createMediaElementSource(bgm); bgmGain=audioCtx.createGain(); bgmGain.gain.value=BGM_VOL; src.connect(bgmGain); bgmGain.connect(audioCtx.destination); bgm.volume=1;
