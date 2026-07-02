@@ -845,6 +845,7 @@ function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.04
     u.lw.rotation.y=0.2+Math.abs(Math.sin(frame*0.32+u.ph));u.rw.rotation.y=-u.lw.rotation.y;}
   for(const b of BIRDS){b.position.x+=b.userData.sp;if(b.position.x>bp.x+42)b.position.x=bp.x-42;
     b.userData.l.rotation.z=0.4+Math.sin(frame*0.3+b.userData.ph)*0.35;b.userData.r.rotation.z=-b.userData.l.rotation.z;}
+  ballon.visible=curT>0.35;   // erst NACH dem Comic-Intro auftauchen -- seine Bewegung zog dort den Blick vom Comic weg (Gerit 2026-07-02)
   ballon.position.y=2.6+Math.sin(frame*0.01)*0.4;ballon.position.x=(W/H<0.7?0:13)+Math.sin(frame*0.004)*3;   // am Handy mittig ueberm Kamm, am Desktop rechts
   {const hc=hase.userData.hc,ph=frame*0.008;hase.position.set(hc.x+Math.sin(ph)*8,Math.abs(Math.sin(frame*0.06))*0.35,hc.z+3.5);hase.rotation.y=Math.cos(ph)>0?Math.PI/2:-Math.PI/2;}
   fahnG.userData.tuch.rotation.y=Math.sin(frame*0.09)*0.3;
