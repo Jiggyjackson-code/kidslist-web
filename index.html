@@ -444,9 +444,9 @@ for(let i=0;i<20;i++){const c=curve.getPointAt(0.03+ i/20*0.94),s=(i%2?1:-1);
   m.scale.x=1.25;m.receiveShadow=true;scene.add(m);}
 const POND=new THREE.MeshStandardMaterial({color:0x82cdf0}),POND_R=new THREE.MeshStandardMaterial({color:0xece5c9});
 NACHTMATS.push({mat:POND,day:new THREE.Color(0x82cdf0),night:new THREE.Color(0x1e4a66)},{mat:POND_R,day:new THREE.Color(0xece5c9),night:new THREE.Color(0x3a4a42)});
-[[0.16,-1],[0.58,-1]].forEach(([t,s])=>{const c=curve.getPointAt(t);   // links, Versatz 12.5: dort stehen nie Haeuser (die sitzen rechts bei 6-10)
-  const rd=new THREE.Mesh(new THREE.CircleGeometry(3.4,18),POND_R);rd.rotation.x=-Math.PI/2;rd.position.set(c.x+s*12.5,0.045,c.z-2);rd.scale.x=1.35;scene.add(rd);
-  const w=new THREE.Mesh(new THREE.CircleGeometry(2.9,18),POND);w.rotation.x=-Math.PI/2;w.position.set(c.x+s*12.5,0.06,c.z-2);w.scale.x=1.35;scene.add(w);});
+function teich(t,quer){const c=curve.getPointAt(t);   // klein + nah am Weg (auch im schmalen Handy-Bild sichtbar); Platzierung beat-gekoppelt (s.u.)
+  const rd=new THREE.Mesh(new THREE.CircleGeometry(3.0,18),POND_R);rd.rotation.x=-Math.PI/2;rd.position.set(c.x+quer,0.045,c.z-1);rd.scale.x=1.3;scene.add(rd);
+  const w=new THREE.Mesh(new THREE.CircleGeometry(2.55,18),POND);w.rotation.x=-Math.PI/2;w.position.set(c.x+quer,0.06,c.z-1);w.scale.x=1.3;scene.add(w);}
 (function(){const P=[];for(let i=0;i<=140;i++){const t=i/140,p=curve.getPointAt(t),a=curve.getPointAt(Math.min(1,t+0.004));
   const tx=a.x-p.x,tz=a.z-p.z,ln=Math.hypot(tx,tz)||1,nx=-tz/ln,nz=tx/ln;
   P.push(p.x+nx*3.6,0.05,p.z+nz*3.6,p.x-nx*3.6,0.05,p.z-nz*3.6);}
@@ -513,21 +513,23 @@ for(let i=0;i<16;i++){const sp=new THREE.Mesh(new THREE.SphereGeometry(0.09,5,5)
 // ===== Herzblut-Details: Windraedchen, Schmetterlinge, Voegel, Ballon, Hase, Ziel-Fahne =====
 const SPIN=[],FLAP=[],BIRDS=[];
 function windrad(x,z){const g=new THREE.Group();   // buntes Kinder-Windraedchen
-  const st=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.06,1.6,5),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=0.8;g.add(st);
-  const rot=new THREE.Group();rot.position.y=1.6;
-  for(let k=0;k<4;k++){const fl=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.5),new THREE.MeshBasicMaterial({color:[0xff5c5c,0xffc72c,0x2ecf6e,0x2d7cf6][k],side:THREE.DoubleSide}));
-    fl.position.set(Math.cos(k*Math.PI/2)*0.33,Math.sin(k*Math.PI/2)*0.33,0);fl.rotation.z=k*Math.PI/2+Math.PI/4;rot.add(fl);}
-  rot.add(new THREE.Mesh(new THREE.SphereGeometry(0.09,6,6),new THREE.MeshBasicMaterial({color:0xffffff})));
+  const st=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,2.2,5),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=1.1;g.add(st);
+  const rot=new THREE.Group();rot.position.y=2.2;
+  for(let k=0;k<4;k++){const fl=new THREE.Mesh(new THREE.PlaneGeometry(0.62,0.62),new THREE.MeshBasicMaterial({color:[0xff5c5c,0xffc72c,0x2ecf6e,0x2d7cf6][k],side:THREE.DoubleSide}));
+    fl.position.set(Math.cos(k*Math.PI/2)*0.41,Math.sin(k*Math.PI/2)*0.41,0);fl.rotation.z=k*Math.PI/2+Math.PI/4;rot.add(fl);}
+  rot.add(new THREE.Mesh(new THREE.SphereGeometry(0.11,6,6),new THREE.MeshBasicMaterial({color:0xffffff})));
   rot.userData.sp=0.05+Math.random()*0.05;g.add(rot);SPIN.push(rot);
   g.position.set(x,0,z);g.rotation.y=KUL_PHI;scene.add(g);}
-[0.12,0.42,0.7].forEach((t,k)=>{const c=curve.getPointAt(t);windrad(c.x+(k%2?-1:1)*(5+k),c.z+2);});
+function windradAm(t,quer){const c=curve.getPointAt(t);windrad(c.x+quer,c.z+1);}   // Platzierung passiert beat-gekoppelt (s.u.)
 function schmetterling(cx,cz,col){const g=new THREE.Group();   // flattert ueber den Beeten
   const l=new THREE.Mesh(new THREE.PlaneGeometry(0.34,0.26),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide}));l.position.x=-0.17;
   const r=l.clone();r.position.x=0.17;
   const lw=new THREE.Group(),rw=new THREE.Group();lw.add(l);rw.add(r);g.add(lw,rw);
   g.userData={cx,cz,ph:Math.random()*6.28,lw,rw,r:1.2+Math.random()*1.2};
   scene.add(g);FLAP.push(g);}
-[0.09,0.28,0.47,0.66,0.85].forEach((t,k)=>{const c=curve.getPointAt(t);schmetterling(c.x+(k%2?4.5:-4.5),c.z+1,[0xffd23f,0xff8ab5,0x9ad0ff,0xffffff,0xffa96e][k]);});
+const FALTERCOL=[0xffd23f,0xff8ab5,0x9ad0ff,0xffffff,0xffa96e,0xc9a3ff];let falterN=0;
+function falter(t,quer){const c=curve.getPointAt(t);schmetterling(c.x+quer,c.z+1,FALTERCOL[falterN++%FALTERCOL.length]);}
+function waeldchen(t,dx){const c=curve.getPointAt(t);baum(c.x+dx,c.z,1.15);baum(c.x+dx+1.6,c.z+1,0.85);baum(c.x+dx-1.3,c.z+1.4,0.95);busch(c.x+dx+0.5,c.z+2.4,0.55);}   // kleine Baumgruppe
 for(let i=0;i<4;i++){const g=new THREE.Group();   // Voegel ziehen hoch vorbei
   const l=new THREE.Mesh(new THREE.PlaneGeometry(0.42,0.13),new THREE.MeshBasicMaterial({color:0x6b7290,side:THREE.DoubleSide}));l.position.x=-0.21;l.rotation.z=0.4;
   const r=l.clone();r.position.x=0.21;r.rotation.z=-0.4;
@@ -546,7 +548,7 @@ const hase=new THREE.Group();   // hoppelt ueber die Wiese
   const kopf=new THREE.Mesh(new THREE.SphereGeometry(0.17,8,8),fell);kopf.position.set(0,0.52,0.28);hase.add(kopf);
   [-0.06,0.06].forEach(ox=>{const ohr=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.3,5),fell);ohr.position.set(ox,0.75,0.24);hase.add(ohr);});
   const pu=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,6),new THREE.MeshStandardMaterial({color:0xffffff}));pu.position.set(0,0.32,-0.33);hase.add(pu);
-  hase.userData.hc=curve.getPointAt(0.33);scene.add(hase);})();
+  hase.scale.setScalar(1.35);hase.userData.hc=curve.getPointAt(0.33);scene.add(hase);})();
 const fahnG=new THREE.Group();   // Fahne am Ziel
 (function(){const end=curve.getPointAt(0.998);
   const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,3.4,6),new THREE.MeshStandardMaterial({color:0xb07b4a}));mast.position.y=1.7;fahnG.add(mast);
@@ -693,6 +695,19 @@ BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat po
 // 10 Beats, grosszuegig verteilt -> mehr sichtbare Fahrt dazwischen (entspannte Reise, Gerit 2026-06-28)
 [0,0.10,0.20,0.30,0.40,0.50,0.61,0.71,0.81,0.91].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});
 [0,2,4,5,6,8,9].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routine/Spiele/Sicher&Fair); Logo-Willkommen (3) klein
+// Herzblut-Details an die HALTE-Punkte koppeln (kurz davor + seitlich nah am Weg): beim Popup-Lesen schaut man genau
+// dorthin, dazwischen faehrt man nur durch (Gerit 2026-07-02). Comic-/Studien-Strecke (0-25%) bleibt bewusst ruhig.
+(function beatDeko(){const A=i=>BEATS[i].at;
+  hase.userData.hc=curve.getPointAt(A(3)-0.012);              // Willkommens-Halt: der Hase hoppelt vor dem Logo
+  windradAm(A(3)-0.008,4.2);                                  // Windraedchen: Willkommen, Charaktere (Paar), Routine, Features
+  windradAm(A(4)-0.014,4.4);windradAm(A(4)-0.008,-4.4);
+  windradAm(A(6)-0.008,-4.3);windradAm(A(7)-0.008,4.2);
+  falter(A(3)-0.005,-4);falter(A(4)-0.005,-3.8);              // Schmetterlinge: je einer an den Halten, zwei bei den Spielen
+  falter(A(6)-0.012,4);falter(A(7)-0.002,-4);
+  falter(A(8)-0.012,4.2);falter(A(8)-0.008,-3.8);
+  teich(A(5)-0.012,-6.5);teich(A(9)-0.012,-6.5);              // Teiche: Landschaft + Sicher&Fair (nachts mit Gluehwuermchen)
+  waeldchen(A(5)-0.005,-11);waeldchen(A(9)-0.005,-10.5);      // Baumgruppen am Hinterufer
+})();
 
 // Routinen + Charaktere fuellen (sprachabhaengig), Popup-Texte, Sprachwechsel
 function fillRoutine(boxId,tasks){const box=document.getElementById(boxId);if(!box)return;box.innerHTML='';
@@ -847,7 +862,7 @@ function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.04
     b.userData.l.rotation.z=0.4+Math.sin(frame*0.3+b.userData.ph)*0.35;b.userData.r.rotation.z=-b.userData.l.rotation.z;}
   ballon.visible=curT>0.35;   // erst NACH dem Comic-Intro auftauchen -- seine Bewegung zog dort den Blick vom Comic weg (Gerit 2026-07-02)
   ballon.position.y=2.6+Math.sin(frame*0.01)*0.4;ballon.position.x=(W/H<0.7?0:13)+Math.sin(frame*0.004)*3;   // am Handy mittig ueberm Kamm, am Desktop rechts
-  {const hc=hase.userData.hc,ph=frame*0.008;hase.position.set(hc.x+Math.sin(ph)*8,Math.abs(Math.sin(frame*0.06))*0.35,hc.z+3.5);hase.rotation.y=Math.cos(ph)>0?Math.PI/2:-Math.PI/2;}
+  {const hc=hase.userData.hc,ph=frame*0.008;hase.position.set(hc.x+2+Math.sin(ph)*5,Math.abs(Math.sin(frame*0.06))*0.35,hc.z+2.5);hase.rotation.y=Math.cos(ph)>0?Math.PI/2:-Math.PI/2;}   // enger Hoppel-Radius, leicht rechts vom Weg: bleibt am Handy im Bild + nicht hinterm Regenbogen
   fahnG.userData.tuch.rotation.y=Math.sin(frame*0.09)*0.3;
   // Welle/Popup erst, wenn die Wolke durchs Ziel gefahren ist (curT, nicht tgtT)
   const wv=curT>0.965;if(wv!==waveOn){waveOn=wv;document.getElementById('wave').classList.toggle('on',wv);if(wv){konfBoom();konf();}}
