@@ -337,13 +337,14 @@
 <script>
 const IMG="assets/img/";
 // ===== 3D-Szene =====
-const scene=new THREE.Scene(); const DAY=new THREE.Color(0xdcefff),NIGHT=new THREE.Color(0x101c44);
-scene.background=DAY.clone(); scene.fog=new THREE.Fog(DAY.clone().getHex(),42,98);
+const scene=new THREE.Scene(); const DAY=new THREE.Color(0xbfe3ff),SUNSET=new THREE.Color(0xffd9b0),NIGHT=new THREE.Color(0x101c44);
+scene.background=DAY.clone(); scene.fog=new THREE.Fog(DAY.clone().getHex(),66,84);   // Dunst dicht hinter dem Fokus: der Boden verlaeuft oben im Bild in den Himmel, Kommendes taucht beim Fahren auf (Luftperspektive)
 let W=innerWidth,H=innerHeight,aspect=W/H,D=15;
 const cam=new THREE.OrthographicCamera(-D*aspect,D*aspect,D,-D,0.1,500);
-const amb=new THREE.AmbientLight(0xffffff,0.85);scene.add(amb);
-const dl=new THREE.DirectionalLight(0xfff2d8,0.85);dl.position.set(12,26,6);dl.castShadow=true;
-dl.shadow.mapSize.set(1024,1024);[dl.shadow.camera.left,dl.shadow.camera.right,dl.shadow.camera.top,dl.shadow.camera.bottom]=[-45,45,45,-45];scene.add(dl);
+const amb=new THREE.AmbientLight(0xffffff,0.55);scene.add(amb);   // weniger Raumlicht -> die Sonne zeichnet sichtbare Schatten
+const DLDAY=new THREE.Color(0xfff2d8),DLSUNSET=new THREE.Color(0xffaf6e),DLNIGHT=new THREE.Color(0x93aeff);
+const dl=new THREE.DirectionalLight(0xfff2d8,1.15);dl.position.set(12,26,6);dl.castShadow=true;
+dl.shadow.mapSize.set(2048,2048);[dl.shadow.camera.left,dl.shadow.camera.right,dl.shadow.camera.top,dl.shadow.camera.bottom]=[-45,45,45,-45];scene.add(dl);scene.add(dl.target);   // Licht + Schattenfenster fahren mit der Wolke mit (sonst enden die Schatten nach ~45 Einheiten)
 const rnd=new THREE.WebGLRenderer({antialias:true,alpha:true});rnd.setSize(W,H);rnd.setPixelRatio(Math.min(2,devicePixelRatio));rnd.shadowMap.enabled=true;rnd.shadowMap.type=THREE.PCFSoftShadowMap;
 document.getElementById('c').appendChild(rnd.domElement);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(340,580),new THREE.MeshStandardMaterial({color:0x96dd83}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
@@ -355,32 +356,126 @@ const lanes=[];
 for(let L=0;L<8;L++){const off=(L-3.5)*0.62;
   const lp=pts.map((p,i)=>{const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];
     const tx=b.x-a.x,tz=b.z-a.z,ln=Math.hypot(tx,tz)||1,nx=-tz/ln,nz=tx/ln;
-    return new THREE.Vector3(p.x+nx*off,1.35,p.z+nz*off);});
+    return new THREE.Vector3(p.x+nx*off,2.4,p.z+nz*off);});   // hoeher schwebend (echter Regenbogen, kein Teppich)
   const lc=new THREE.CatmullRomCurve3(lp);
   const tb=new THREE.Mesh(new THREE.TubeGeometry(lc,300,0.34,6,false),new THREE.MeshBasicMaterial({color:LANE8[L]}));
   tb.scale.y=0.7;scene.add(tb);lanes.push(tb);}
 const laneMax=lanes[0].geometry.index.count;
 // weicher Schatten unter dem Regenbogen -> er wirkt schwebend
-const shadow=new THREE.Mesh(new THREE.TubeGeometry(curve,300,2.1,8,false),new THREE.MeshBasicMaterial({color:0x0e2e0e,transparent:true,opacity:0.11}));shadow.scale.y=0.008;shadow.position.y=0.05;scene.add(shadow);   // schmaler + blasser -> hoeher schwebender Regenbogen
+const shadow=new THREE.Mesh(new THREE.TubeGeometry(curve,300,2.4,8,false),new THREE.MeshBasicMaterial({color:0x0e2e0e,transparent:true,opacity:0.16}));shadow.scale.y=0.008;shadow.position.y=0.05;scene.add(shadow);   // deutlicher Bodenschatten -> der Regenbogen liest sich als schwebend
 const shadowMax=shadow.geometry.index.count;
-// Deko
-const COLS=[0xff8aa0,0x8ac7ff,0xffd23f,0xa0e090,0xc6a8ff,0xff9f6e];
-function haus(x,z,w,h,col){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),new THREE.MeshStandardMaterial({color:col}));b.position.y=h/2;b.castShadow=true;const d=new THREE.Mesh(new THREE.ConeGeometry(w*0.82,h*0.5,4),new THREE.MeshStandardMaterial({color:0xffffff}));d.position.y=h+h*0.25;d.rotation.y=Math.PI/4;d.castShadow=true;g.add(b,d);g.position.set(x,0,z);scene.add(g);}
-function baum(x,z,s){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.18*s,0.22*s,1.1*s,6),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=0.55*s;const kr=new THREE.Mesh(new THREE.ConeGeometry(0.9*s,1.8*s,8),new THREE.MeshStandardMaterial({color:0x59b85a}));kr.position.y=1.7*s;kr.castShadow=true;g.add(st,kr);g.position.set(x,0,z);scene.add(g);}
-for(let i=2;i<31;i++){const c=curve.getPointAt(i/32),side=(i%2?1:-1);if(i%2)haus(c.x+side*(6+Math.random()*4),c.z,2+Math.random()*1.5,2.5+Math.random()*4,COLS[i%6]);else baum(c.x+side*(5+Math.random()*4),c.z,0.8+Math.random()*0.7);baum(c.x-side*(7+Math.random()*5),c.z+3,0.7+Math.random()*0.5);}
+// Deko -- Haeuser in ruhigen Pastell-Toenen mit Dach-Ueberstand, Fenstern (leuchten abends) und Tuer;
+// der Regenbogen bleibt der einzige vollgesaettigte Akteur (Farb-Disziplin nach VECTR-Vorbild)
+const PASTELL=[0xfff4e0,0xffe4e8,0xdcecff];
+const WIN_DAY=new THREE.Color(0xaaccdd),WIN_NIGHT=new THREE.Color(0xffd98a);
+const winMat=new THREE.MeshBasicMaterial({color:0xaaccdd});
+const dachMat=new THREE.MeshStandardMaterial({color:0xe8896a,flatShading:true});
+const tuerMat=new THREE.MeshStandardMaterial({color:0xa9765c});
+function haus(x,z,w,h,col){const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),new THREE.MeshStandardMaterial({color:col}));b.position.y=h/2;b.castShadow=true;
+  const d=new THREE.Mesh(new THREE.ConeGeometry(w*0.78+0.25,h*0.55,4),dachMat);d.position.y=h+h*0.27;d.rotation.y=Math.PI/4;d.castShadow=true;
+  const f1=new THREE.Mesh(new THREE.BoxGeometry(w*0.2,w*0.24,0.06),winMat);f1.position.set(-w*0.22,h*0.64,w/2+0.03);
+  const f2=f1.clone();f2.position.x=w*0.22;
+  const f3=new THREE.Mesh(new THREE.BoxGeometry(0.06,w*0.24,w*0.2),winMat);f3.position.set(w/2+0.03,h*0.64,0);
+  const tr=new THREE.Mesh(new THREE.BoxGeometry(w*0.26,h*0.4,0.06),tuerMat);tr.position.set(0,h*0.2,w/2+0.03);
+  g.add(b,d,f1,f2,f3,tr);g.position.set(x,0,z);scene.add(g);}
+const KRON=[0x59b85a,0x3f9e55,0x6cc46a];
+function baum(x,z,s){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.18*s,0.22*s,1.1*s,6),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=0.55*s;const kr=new THREE.Mesh(new THREE.ConeGeometry(0.9*s,1.8*s,8),new THREE.MeshStandardMaterial({color:KRON[Math.floor(Math.random()*3)]}));kr.position.y=1.7*s;kr.castShadow=true;g.add(st,kr);g.position.set(x,0,z);scene.add(g);}
+for(let i=2;i<31;i++){const c=curve.getPointAt(i/32),side=(i%2?1:-1);if(i%2)haus(c.x+side*(6+Math.random()*4),c.z,2.2+Math.random()*1.3,2.2+Math.random()*1.4+(i%5===0?1.1:0),PASTELL[i%3]);else baum(c.x+side*(5+Math.random()*4),c.z,0.8+Math.random()*0.7);baum(c.x-side*(7+Math.random()*5),c.z+3,0.7+Math.random()*0.5);}
 // ===== WOW: Berge, Blumen, Wolken, schwebende Bluetenblaetter =====
 const FLOWCOL=[0xff6b9d,0xffd23f,0xff9f43,0xa55eea,0xffffff,0xff7979,0x4dd0e1];
-function blume(x,z){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,0.55,4),new THREE.MeshStandardMaterial({color:0x4a9d4a}));st.position.y=0.27;const bl=new THREE.Mesh(new THREE.SphereGeometry(0.17,7,7),new THREE.MeshStandardMaterial({color:FLOWCOL[Math.floor(Math.random()*FLOWCOL.length)]}));bl.position.y=0.58;g.add(st,bl);g.position.set(x,0,z);scene.add(g);}
+function blume(x,z,farbe){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,0.55,4),new THREE.MeshStandardMaterial({color:0x4a9d4a}));st.position.y=0.27;const bl=new THREE.Mesh(new THREE.SphereGeometry(0.2,7,7),new THREE.MeshStandardMaterial({color:farbe||FLOWCOL[Math.floor(Math.random()*FLOWCOL.length)]}));bl.position.y=0.58;g.add(st,bl);g.position.set(x,0,z);scene.add(g);}
 function busch(x,z,s){const m=new THREE.Mesh(new THREE.SphereGeometry(s,7,6),new THREE.MeshStandardMaterial({color:0x6cc04a,flatShading:true}));m.position.set(x,s*0.7,z);m.scale.y=0.8;m.castShadow=true;scene.add(m);}
-for(let i=1;i<32;i++){const c=curve.getPointAt(i/32);for(let k=0;k<3;k++){const s=(k%2?1:-1);blume(c.x+s*(3.6+Math.random()*9),c.z+(Math.random()-0.5)*6);}if(i%3===0)busch(c.x+(i%2?1:-1)*(4+Math.random()*6),c.z+2,0.5+Math.random()*0.5);}
-const BERG=[0x8fb98f,0x7aa97a,0xa7c7a7];
-const bergG=new THREE.Group();scene.add(bergG);   // Berge folgen der Kamera -> bleiben immer am Horizont
-for(let i=0;i<18;i++){const s=(i%2?1:-1),h=11+Math.random()*11;const m=new THREE.Mesh(new THREE.ConeGeometry(h*0.85,h,6),new THREE.MeshStandardMaterial({color:BERG[i%3],flatShading:true}));m.position.set(s*(28+Math.random()*13),h/2,-60+i*7);bergG.add(m);}
+// Blumen in BEETEN gruppiert (eine Farbfamilie pro Beet, wirkt gepflegt) statt Einzel-Streu ueber die ganze Wiese
+function beet(cx,cz,farbe,n){for(let k=0;k<n;k++){const a=Math.random()*6.28,r=0.4+Math.random()*1.7;blume(cx+Math.cos(a)*r,cz+Math.sin(a)*r*0.7,farbe);}}
+for(let i=2;i<31;i+=3){const c=curve.getPointAt(i/32),s=(i%2?1:-1);
+  beet(c.x+s*(4.5+Math.random()*5),c.z+(Math.random()-0.5)*4,FLOWCOL[i%FLOWCOL.length],6+Math.floor(Math.random()*4));}
+for(let i=3;i<32;i+=3){const c=curve.getPointAt(i/32);busch(c.x+(i%2?1:-1)*(4+Math.random()*6),c.z+2,0.5+Math.random()*0.5);}
+// Bergkulisse: die Kamera schaut so steil, dass es keinen echten Horizont gibt (der Boden fuellt das Bild bis oben).
+// Darum: eine kamera-feste Kulissen-Gruppe QUER zur Blickrichtung im Dunst-Band -- 2 Bergreihen (vom Dunst ausgenommen,
+// die Ferne steckt in den blassen Farben) + gruene Huegel als Uebergang (die verdunsten mit). Wirkt wie ein Horizont.
+const KUL_PHI=Math.atan2(30,38);   // Blick-Boden-Richtung der Kamera (CAM_OFF 30/34) -> Kulisse steht immer quer zum Blick
+const bergG=new THREE.Group();scene.add(bergG);   // faehrt mit dem Fokus mit (x+z)
+const kulG=new THREE.Group();kulG.rotation.y=KUL_PHI;bergG.add(kulG);
+function berg(x,z,h,col,snow){const rot=Math.random()*Math.PI;
+  const m=new THREE.Mesh(new THREE.ConeGeometry(h*1.35,h,6),new THREE.MeshStandardMaterial({color:col,flatShading:true,fog:false}));
+  m.position.set(x,h/2-0.3,z);m.rotation.y=rot;kulG.add(m);
+  if(snow){const sn=new THREE.Mesh(new THREE.ConeGeometry(h*1.35*0.34,h*0.28,6),new THREE.MeshStandardMaterial({color:0xffffff,flatShading:true,fog:false}));
+    sn.position.set(x,h-h*0.14-0.3,z);sn.rotation.y=rot;kulG.add(sn);}}
+const kulFenster=x=>Math.abs(x+5.5)<6||Math.abs(x-4.5)<5.5;   // zwei Luecken im Kamm nahe der Mitte (auch im schmalen Handy-Bild sichtbar): links Sonne, rechts Mond
+for(let i=0;i<12;i++){const x=-58+(i+0.5)*(116/12)+(Math.random()-0.5)*4;if(kulFenster(x))continue;const h=4.4+Math.random()*3.1;berg(x,-28.5+(Math.random()-0.5)*3,h,0xa8bce8,h>6);}   // hintere Reihe (blasser, ragt oben raus = Silhouette)
+for(let i=0;i<16;i++){const x=-55+(i+0.5)*(110/16)+(Math.random()-0.5)*4;let h=3.5+Math.random()*2.5;if(kulFenster(x))h*=0.5;berg(x,-23+(Math.random()-0.5)*3,h,0x86a8e0,h>4.6);}   // vordere Reihe
+// gruene Huegel als Uebergang zwischen Wiese und Bergen (verdunsten mit dem Boden)
+const HUEG1=new THREE.MeshStandardMaterial({color:0x8fd08a,flatShading:true}),HUEG2=new THREE.MeshStandardMaterial({color:0x7cc57f,flatShading:true});
+for(let i=0;i<9;i++){const w=6+Math.random()*4;const m=new THREE.Mesh(new THREE.SphereGeometry(w,8,6),i%2?HUEG1:HUEG2);
+  m.position.set(-50+(i+0.5)*(100/9)+(Math.random()-0.5)*5,-w*0.25,-17.5-Math.random()*3);m.scale.y=0.5;kulG.add(m);}
+// Sonne + Mond wandern ueber den Bergkamm (Tageszeit sichtbar -- wie in der App)
+const SUNCOL_HI=new THREE.Color(0xffd94f),SUNCOL_LO=new THREE.Color(0xff8a3d);
+const sonne=new THREE.Group();
+const sK=new THREE.Mesh(new THREE.SphereGeometry(2.0,16,16),new THREE.MeshBasicMaterial({color:0xffd94f,fog:false}));
+const sG=new THREE.Mesh(new THREE.SphereGeometry(2.9,16,16),new THREE.MeshBasicMaterial({color:0xffe9a3,transparent:true,opacity:0.35,fog:false}));
+sonne.add(sK,sG);kulG.add(sonne);
+const mond=new THREE.Group();
+const mK=new THREE.Mesh(new THREE.SphereGeometry(1.7,16,16),new THREE.MeshBasicMaterial({color:0xfff6d8,transparent:true,opacity:0,fog:false}));
+const mG=new THREE.Mesh(new THREE.SphereGeometry(2.5,16,16),new THREE.MeshBasicMaterial({color:0xfff6d8,transparent:true,opacity:0,fog:false}));
+mond.add(mK,mG);kulG.add(mond);
+// Nacht-Sterne im Band ueber den Bergen (blenden mit der Daemmerung ein)
+const NIGHTSTARS=[];
+for(let i=0;i<36;i++){const st=new THREE.Mesh(new THREE.SphereGeometry(0.14+Math.random()*0.16,6,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,fog:false}));
+  st.position.set(-48+Math.random()*96,0.4+Math.random()*4.8,-26-Math.random()*5);st.userData.o=0.5+Math.random()*0.5;kulG.add(st);NIGHTSTARS.push(st);}
+// Gluehwuermchen ueber der Wiese (nur nachts, blinken)
+const FIREFLIES=[];
+for(let i=0;i<22;i++){const t=0.45+Math.random()*0.53,c=curve.getPointAt(t),s=(i%2?1:-1);
+  const f=new THREE.Mesh(new THREE.SphereGeometry(0.09,5,5),new THREE.MeshBasicMaterial({color:0xffe97a}));
+  f.position.set(c.x+s*(3+Math.random()*7),0.8+Math.random()*1.6,c.z+(Math.random()-0.5)*5);
+  f.userData.ph=Math.random()*6.28;f.visible=false;scene.add(f);FIREFLIES.push(f);}
+// Tag->Abendrot->Nacht: Himmel/Dunst, Lichtfarbe, Boden -- eine Stelle steuert alles
+const NACHTMATS=[
+  {mat:ground.material,day:new THREE.Color(0x96dd83),night:new THREE.Color(0x2e4b44)},
+  {mat:HUEG1,day:new THREE.Color(0x8fd08a),night:new THREE.Color(0x27423c)},
+  {mat:HUEG2,day:new THREE.Color(0x7cc57f),night:new THREE.Color(0x233d38)}
+];
+// Patchwork-Wiesenflecken + Teiche + gepunkteter Begleit-Pfad: der Boden bekommt Leben (statt Einheitsflaeche)
+const FLECK1=new THREE.MeshStandardMaterial({color:0x8fd982}),FLECK2=new THREE.MeshStandardMaterial({color:0x7fcf74});
+NACHTMATS.push({mat:FLECK1,day:new THREE.Color(0x8fd982),night:new THREE.Color(0x2a473f)},{mat:FLECK2,day:new THREE.Color(0x7fcf74),night:new THREE.Color(0x26413a)});
+for(let i=0;i<20;i++){const c=curve.getPointAt(0.03+ i/20*0.94),s=(i%2?1:-1);
+  const m=new THREE.Mesh(new THREE.CircleGeometry(3+Math.random()*5,12),i%3?FLECK1:FLECK2);
+  m.rotation.x=-Math.PI/2;m.position.set(c.x+s*(2+Math.random()*13),0.02+0.012*(i%2),c.z+(Math.random()-0.5)*8);
+  m.scale.x=1.25;m.receiveShadow=true;scene.add(m);}
+const POND=new THREE.MeshStandardMaterial({color:0x82cdf0}),POND_R=new THREE.MeshStandardMaterial({color:0xece5c9});
+NACHTMATS.push({mat:POND,day:new THREE.Color(0x82cdf0),night:new THREE.Color(0x1e4a66)},{mat:POND_R,day:new THREE.Color(0xece5c9),night:new THREE.Color(0x3a4a42)});
+[[0.16,-1],[0.58,-1]].forEach(([t,s])=>{const c=curve.getPointAt(t);   // links, Versatz 12.5: dort stehen nie Haeuser (die sitzen rechts bei 6-10)
+  const rd=new THREE.Mesh(new THREE.CircleGeometry(3.4,18),POND_R);rd.rotation.x=-Math.PI/2;rd.position.set(c.x+s*12.5,0.045,c.z-2);rd.scale.x=1.35;scene.add(rd);
+  const w=new THREE.Mesh(new THREE.CircleGeometry(2.9,18),POND);w.rotation.x=-Math.PI/2;w.position.set(c.x+s*12.5,0.06,c.z-2);w.scale.x=1.35;scene.add(w);});
+(function(){const P=[];for(let i=0;i<=140;i++){const t=i/140,p=curve.getPointAt(t),a=curve.getPointAt(Math.min(1,t+0.004));
+  const tx=a.x-p.x,tz=a.z-p.z,ln=Math.hypot(tx,tz)||1,nx=-tz/ln,nz=tx/ln;
+  P.push(p.x+nx*3.6,0.05,p.z+nz*3.6,p.x-nx*3.6,0.05,p.z-nz*3.6);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
+  scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xfef9e2,size:3,sizeAttenuation:false,transparent:true,opacity:0.8})));})();
+let fireW=0;
+function applyDaylight(nk){
+  // Drei Phasen: voller Tag (bis 32%), Abendrot (32-62%), Nacht (62-100%) -- Boden/Wiese kippen erst MIT der Nacht,
+  // damit die goldene Stunde golden bleibt statt frueh zu vergrauen
+  const abk=Math.max(0,Math.min(1,(nk-0.32)/0.30)),nak=Math.max(0,Math.min(1,(nk-0.62)/0.38));
+  if(nak<=0){scene.background.copy(DAY).lerp(SUNSET,abk);dl.color.copy(DLDAY).lerp(DLSUNSET,abk);}
+  else{scene.background.copy(SUNSET).lerp(NIGHT,nak);dl.color.copy(DLSUNSET).lerp(DLNIGHT,nak);}
+  scene.fog.color.copy(scene.background);
+  amb.intensity=0.55-abk*0.10-nak*0.15;dl.intensity=1.15-abk*0.15-nak*0.55;
+  for(const e of NACHTMATS)e.mat.color.copy(e.day).lerp(e.night,nak);
+  const sd=Math.min(1,nk/0.62);sonne.position.set(-4-2.5*sd,3.6-3.8*sd,-25.5);
+  sK.material.color.copy(SUNCOL_HI).lerp(SUNCOL_LO,sd);sG.material.color.copy(sK.material.color);
+  sonne.visible=nk<0.64;
+  const md=Math.max(0,Math.min(1,(nk-0.55)/0.35));mond.position.set(5-1.5*md,-0.6+4.2*md,-25.5);mond.visible=md>0;
+  mK.material.opacity=md;mG.material.opacity=0.22*md;
+  const sw=Math.max(0,Math.min(1,(nk-0.66)*3));for(const st of NIGHTSTARS)st.material.opacity=sw*st.userData.o;
+  fireW=sw;for(const f of FIREFLIES)f.visible=fireW>0;
+  winMat.color.copy(WIN_DAY).lerp(WIN_NIGHT,Math.max(0,Math.min(1,(nk-0.42)/0.3)));   // Fenster glimmen ab der Daemmerung warm
+}
 const CLOUDS=[];
 // Wolken-Kugel mit sanfter Schattierung (oben hell, unten leicht grau) -> Volumen, aber licht-unabhaengig (dunkelt bei Nacht nicht ab)
 function cloudGeo(r){const g=new THREE.SphereGeometry(r,10,9);const pos=g.attributes.position,col=[];for(let i=0;i<pos.count;i++){const ny=(pos.getY(i)/r+1)/2,sh=0.75+ny*0.25;col.push(sh,sh,Math.min(1,sh*1.02));}g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));return g;}
 function wolke(x,y,z,s){const g=new THREE.Group();[[0,0,0,1],[1,0.1,0,0.72],[-1,0.1,0,0.72],[0.5,0.45,0.2,0.6],[-0.4,0.4,-0.2,0.55]].forEach(c=>{const b=new THREE.Mesh(cloudGeo(c[3]*s),new THREE.MeshBasicMaterial({vertexColors:true}));b.position.set(c[0]*s,c[1]*s,c[2]*s);g.add(b);});g.position.set(x,y,z);g.userData.sp=0.005+Math.random()*0.006;scene.add(g);CLOUDS.push(g);}
-for(let i=0;i<14;i++){const c=curve.getPointAt(i/13);wolke(c.x+(Math.random()-0.5)*44,12+Math.random()*10,c.z-2,1.4+Math.random()*1.4);}
+for(let i=0;i<14;i++){const c=curve.getPointAt(i/13);wolke(c.x-34+Math.random()*44,10+Math.random()*4,c.z-2,1.4+Math.random()*1.4);}   // hoch + weg vom Kamera-Korridor: kein Kringel-Glitch, keine Wolke "sitzt" auf der Deko
 const PETALS=[];
 for(let i=0;i<44;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(0.1,5,5),new THREE.MeshStandardMaterial({color:FLOWCOL[i%FLOWCOL.length]}));p.position.set((Math.random()-0.5)*60,1+Math.random()*9,-Math.random()*224);p.userData={sx:(Math.random()-0.5)*0.02,ph:Math.random()*6.28};scene.add(p);PETALS.push(p);}
 function logoTex(){const cv=document.createElement('canvas');cv.width=512;cv.height=180;const x=cv.getContext('2d');
@@ -406,8 +501,60 @@ const tip=new THREE.Group();
   const b=new THREE.Mesh(cloudGeo(c[3]),new THREE.MeshBasicMaterial({vertexColors:true}));
   b.position.set(c[0],c[1],c[2]);tip.add(b);});
 scene.add(tip);
-const CAM_OFF=new THREE.Vector3(15,17,15);
-function setCurveT(t){t=Math.max(0,Math.min(0.999,t));const p=curve.getPointAt(t);tip.position.set(p.x,1.5,p.z);cam.position.set(p.x+CAM_OFF.x,CAM_OFF.y,p.z+CAM_OFF.z);cam.lookAt(p.x,0,p.z-4);}
+// Start-Woelkchen kaschiert den Regenbogen-Anfang (wie die grosse Wolke das Ende)
+(function(){const s0=curve.getPointAt(0);const g=new THREE.Group();
+  [[0,0,0,1.2],[1.4,0.1,0,0.9],[-1.4,0.1,0,0.9],[0.6,0.5,0.3,0.8],[-0.5,0.45,-0.3,0.75]].forEach(c=>{
+    const b=new THREE.Mesh(cloudGeo(c[3]),new THREE.MeshBasicMaterial({vertexColors:true}));b.position.set(c[0]*1.1,c[1],c[2]);g.add(b);});
+  g.position.set(s0.x,2.4,s0.z+0.5);scene.add(g);})();
+// Glitzer-Funken fallen von der Zug-Wolke auf den Regenbogen
+const SPARKS=[];
+for(let i=0;i<16;i++){const sp=new THREE.Mesh(new THREE.SphereGeometry(0.09,5,5),new THREE.MeshBasicMaterial({color:i%2?0xfff3b0:0xffffff,transparent:true,opacity:0}));
+  sp.userData={life:Math.random(),vx:0};scene.add(sp);SPARKS.push(sp);}
+// ===== Herzblut-Details: Windraedchen, Schmetterlinge, Voegel, Ballon, Hase, Ziel-Fahne =====
+const SPIN=[],FLAP=[],BIRDS=[];
+function windrad(x,z){const g=new THREE.Group();   // buntes Kinder-Windraedchen
+  const st=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.06,1.6,5),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=0.8;g.add(st);
+  const rot=new THREE.Group();rot.position.y=1.6;
+  for(let k=0;k<4;k++){const fl=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.5),new THREE.MeshBasicMaterial({color:[0xff5c5c,0xffc72c,0x2ecf6e,0x2d7cf6][k],side:THREE.DoubleSide}));
+    fl.position.set(Math.cos(k*Math.PI/2)*0.33,Math.sin(k*Math.PI/2)*0.33,0);fl.rotation.z=k*Math.PI/2+Math.PI/4;rot.add(fl);}
+  rot.add(new THREE.Mesh(new THREE.SphereGeometry(0.09,6,6),new THREE.MeshBasicMaterial({color:0xffffff})));
+  rot.userData.sp=0.05+Math.random()*0.05;g.add(rot);SPIN.push(rot);
+  g.position.set(x,0,z);g.rotation.y=KUL_PHI;scene.add(g);}
+[0.12,0.42,0.7].forEach((t,k)=>{const c=curve.getPointAt(t);windrad(c.x+(k%2?-1:1)*(5+k),c.z+2);});
+function schmetterling(cx,cz,col){const g=new THREE.Group();   // flattert ueber den Beeten
+  const l=new THREE.Mesh(new THREE.PlaneGeometry(0.34,0.26),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide}));l.position.x=-0.17;
+  const r=l.clone();r.position.x=0.17;
+  const lw=new THREE.Group(),rw=new THREE.Group();lw.add(l);rw.add(r);g.add(lw,rw);
+  g.userData={cx,cz,ph:Math.random()*6.28,lw,rw,r:1.2+Math.random()*1.2};
+  scene.add(g);FLAP.push(g);}
+[0.09,0.28,0.47,0.66,0.85].forEach((t,k)=>{const c=curve.getPointAt(t);schmetterling(c.x+(k%2?4.5:-4.5),c.z+1,[0xffd23f,0xff8ab5,0x9ad0ff,0xffffff,0xffa96e][k]);});
+for(let i=0;i<4;i++){const g=new THREE.Group();   // Voegel ziehen hoch vorbei
+  const l=new THREE.Mesh(new THREE.PlaneGeometry(0.42,0.13),new THREE.MeshBasicMaterial({color:0x6b7290,side:THREE.DoubleSide}));l.position.x=-0.21;l.rotation.z=0.4;
+  const r=l.clone();r.position.x=0.21;r.rotation.z=-0.4;
+  g.add(l,r);g.userData={ph:Math.random()*6.28,sp:0.02+Math.random()*0.015,l,r};
+  g.position.set((Math.random()-0.5)*40,7+Math.random()*3,-Math.random()*200);scene.add(g);BIRDS.push(g);}
+const ballon=new THREE.Group();   // Heissluftballon ueber dem Kamm (Gruss an das App-Ballon-Bild)
+(function(){const hull=new THREE.Mesh(new THREE.SphereGeometry(1.4,12,10),new THREE.MeshBasicMaterial({color:0xff8a5c,fog:false}));hull.scale.y=1.15;ballon.add(hull);
+  const top=new THREE.Mesh(new THREE.SphereGeometry(1.42,12,10),new THREE.MeshBasicMaterial({color:0xffd23f,fog:false}));top.scale.set(1,0.5,1);top.position.y=0.75;ballon.add(top);
+  const korb=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.42,0.55),new THREE.MeshBasicMaterial({color:0x9c6b3f,fog:false}));korb.position.y=-2.1;ballon.add(korb);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([sx,sz])=>{const seil=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.85,3),new THREE.MeshBasicMaterial({color:0x6b4a2f,fog:false}));
+    seil.position.set(sx*0.32,-1.55,sz*0.32);ballon.add(seil);});
+  ballon.position.set(24,2.5,-24);kulG.add(ballon);})();
+const hase=new THREE.Group();   // hoppelt ueber die Wiese
+(function(){const fell=new THREE.MeshStandardMaterial({color:0xf5efe6});
+  const k=new THREE.Mesh(new THREE.SphereGeometry(0.28,8,8),fell);k.scale.set(1,0.85,1.25);k.position.y=0.3;hase.add(k);
+  const kopf=new THREE.Mesh(new THREE.SphereGeometry(0.17,8,8),fell);kopf.position.set(0,0.52,0.28);hase.add(kopf);
+  [-0.06,0.06].forEach(ox=>{const ohr=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.3,5),fell);ohr.position.set(ox,0.75,0.24);hase.add(ohr);});
+  const pu=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,6),new THREE.MeshStandardMaterial({color:0xffffff}));pu.position.set(0,0.32,-0.33);hase.add(pu);
+  hase.userData.hc=curve.getPointAt(0.33);scene.add(hase);})();
+const fahnG=new THREE.Group();   // Fahne am Ziel
+(function(){const end=curve.getPointAt(0.998);
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,3.4,6),new THREE.MeshStandardMaterial({color:0xb07b4a}));mast.position.y=1.7;fahnG.add(mast);
+  const tuch=new THREE.Mesh(new THREE.PlaneGeometry(1.1,0.6),new THREE.MeshBasicMaterial({color:0xff3d77,side:THREE.DoubleSide}));tuch.position.set(0.55,3.05,0);fahnG.add(tuch);fahnG.userData.tuch=tuch;
+  fahnG.position.set(end.x+5.2,0,end.z-1);fahnG.rotation.y=KUL_PHI;scene.add(fahnG);})();
+const CAM_OFF=new THREE.Vector3(30,34,34);   // doppelter Abstand bei EXAKT gleicher Blickrichtung (identisches Bild; nichts schneidet mehr die Nah-Ebene = weisser-Kringel-Fix)
+function setCurveT(t){t=Math.max(0,Math.min(0.999,t));const p=curve.getPointAt(t);tip.position.set(p.x,2.6,p.z);cam.position.set(p.x+CAM_OFF.x,CAM_OFF.y,p.z+CAM_OFF.z);cam.lookAt(p.x,0,p.z-4);
+  dl.position.set(p.x+12,26,p.z+6);dl.target.position.set(p.x,0,p.z);}   // Sonnenlicht + Schattenfenster fahren mit
 
 const STORES=`<div class="stores"><a class="btn store" href="https://apps.apple.com/app/id6785305539" target="_blank" rel="noopener">App Store</a><a class="btn store" href="#" onclick="return false">Google Play</a></div>`;
 const LAND=(t,m)=>`<div class="lwrap"><div class="ph" style="background-image:url('${IMG}land/${t}-tag.webp')"></div><div class="ph night" style="background-image:url('${IMG}land/${t}-nacht.webp')"></div></div><h2 style="font-size:1.2rem">${m}</h2>`;
@@ -679,13 +826,28 @@ let frame=0;
 function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.045;setCurveT(curT);updateBeats(curT);
   const seg=Math.max(0,Math.min(1,curT));for(const l of lanes)l.geometry.setDrawRange(0,Math.floor(laneMax*seg));  // Linien enden direkt unter der Wolke (kein Versatz); die grosse Wolke darueber verdeckt das Ende
   shadow.geometry.setDrawRange(0,Math.floor(shadowMax*seg));
-  const tw=1+Math.sin(frame*0.07)*0.05;tip.scale.setScalar(tw);tip.position.y=1.5+Math.sin(frame*0.05)*0.1;bergG.position.z=curve.getPointAt(Math.max(0,Math.min(0.999,curT))).z;
-  // langsam Nacht werden bis zum Sternenfeld
-  const nk=Math.min(1,curT*1.04);scene.background.copy(DAY).lerp(NIGHT,nk);scene.fog.color.copy(scene.background);
-  amb.intensity=0.85-nk*0.5;dl.intensity=0.8-nk*0.5;
+  const tw=1+Math.sin(frame*0.07)*0.05;tip.scale.setScalar(tw);tip.position.y=2.6+Math.sin(frame*0.05)*0.1;
+  const bp=curve.getPointAt(Math.max(0,Math.min(0.999,curT)));bergG.position.set(bp.x,0,bp.z);   // Kulisse kamera-fest (x+z), sonst wandert der "Horizont" beim Schlaengeln
+  // langsam Nacht werden bis zum Sternenfeld (Himmel/Dunst/Licht/Boden/Sonne/Mond zentral)
+  const nk=Math.min(1,curT*1.04);applyDaylight(nk);
   if(curT>0.6){const sv=Math.min(1,(curT-0.6)/0.3);for(const s of STARS)s.scale.setScalar((0.5+sv*0.6)+Math.sin(frame*0.05+s.userData.ph)*0.25);}
   for(const cl of CLOUDS){cl.position.x+=cl.userData.sp;if(cl.position.x>48)cl.position.x=-48;}
   for(const pt of PETALS){pt.position.y+=Math.sin(frame*0.02+pt.userData.ph)*0.012;pt.position.x+=pt.userData.sx;pt.rotation.z+=0.03;}
+  if(fireW>0)for(const f of FIREFLIES){const s=0.7+0.5*Math.sin(frame*0.11+f.userData.ph);f.scale.setScalar(s*fireW);}
+  lanes.forEach((l,i)=>l.position.y=Math.sin(frame*0.04+i*0.55)*0.14);   // der Regenbogen atmet sanft
+  for(const sp of SPARKS){sp.userData.life+=0.018;
+    if(sp.userData.life>=1){sp.userData.life=0;sp.userData.vx=(Math.random()-0.5)*0.02;
+      sp.position.set(tip.position.x+(Math.random()-0.5)*3,tip.position.y+0.5,tip.position.z+(Math.random()-0.5)*3);}
+    sp.position.y-=0.028;sp.position.x+=sp.userData.vx;sp.material.opacity=0.9*(1-sp.userData.life);}
+  for(const r of SPIN)r.rotation.z+=r.userData.sp;
+  for(const b of FLAP){const u=b.userData;
+    b.position.set(u.cx+Math.cos(frame*0.012+u.ph)*u.r,1.15+Math.sin(frame*0.02+u.ph)*0.3,u.cz+Math.sin(frame*0.012+u.ph)*u.r*0.6);
+    u.lw.rotation.y=0.2+Math.abs(Math.sin(frame*0.32+u.ph));u.rw.rotation.y=-u.lw.rotation.y;}
+  for(const b of BIRDS){b.position.x+=b.userData.sp;if(b.position.x>bp.x+42)b.position.x=bp.x-42;
+    b.userData.l.rotation.z=0.4+Math.sin(frame*0.3+b.userData.ph)*0.35;b.userData.r.rotation.z=-b.userData.l.rotation.z;}
+  ballon.position.y=2.6+Math.sin(frame*0.01)*0.4;ballon.position.x=(W/H<0.7?0:13)+Math.sin(frame*0.004)*3;   // am Handy mittig ueberm Kamm, am Desktop rechts
+  {const hc=hase.userData.hc,ph=frame*0.008;hase.position.set(hc.x+Math.sin(ph)*8,Math.abs(Math.sin(frame*0.06))*0.35,hc.z+3.5);hase.rotation.y=Math.cos(ph)>0?Math.PI/2:-Math.PI/2;}
+  fahnG.userData.tuch.rotation.y=Math.sin(frame*0.09)*0.3;
   // Welle/Popup erst, wenn die Wolke durchs Ziel gefahren ist (curT, nicht tgtT)
   const wv=curT>0.965;if(wv!==waveOn){waveOn=wv;document.getElementById('wave').classList.toggle('on',wv);if(wv){konfBoom();konf();}}
   rnd.render(scene,cam);}
