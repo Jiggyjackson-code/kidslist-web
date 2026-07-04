@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kidzlist – die Routine-App für kleine Kinder</title>
+<style>
+  @font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url('fredoka.woff2') format('woff2')}
+  :root{--rosa:#FF3B30;--orange:#FF9500;--gelb:#FFC72C;--gruen:#2ECF6E;--blau:#2D7CF6;--indigo:#5856D6;--lila:#AF52DE;--pink:#FF3D77;--tinte:#1B1B2F}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Fredoka',system-ui,sans-serif;background:#dcefff;color:#1B1B2F;overflow-x:hidden}
+  #c{position:fixed;inset:0;z-index:0}
+  #scroller{position:relative;z-index:1;pointer-events:none}
+  .hud{position:fixed;top:.8rem;left:0;right:0;text-align:center;z-index:6;pointer-events:none;opacity:0;transition:opacity .5s}
+  .hud.on{opacity:1}
+  .hud svg{width:104px;height:auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.25))}
+  #lang{position:fixed;top:.7rem;right:.7rem;z-index:8;display:flex;gap:.25rem}
+  #lang button{border:none;background:rgba(255,255,255,.82);color:#1B1B2F;font:700 .78rem 'Fredoka',sans-serif;padding:.3rem .5rem;border-radius:.55rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  #lang button.on{background:var(--indigo);color:#fff}
+  #prog{position:fixed;top:0;left:0;height:4px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77);z-index:9;transition:transform .12s linear}
+  #snd{position:fixed;top:.7rem;left:.7rem;z-index:8;border:none;background:rgba(255,255,255,.82);font-size:1rem;width:2rem;height:2rem;border-radius:.55rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);line-height:1;padding:0}
+  #cta{position:fixed;bottom:1.1rem;right:.9rem;z-index:8;background:var(--indigo);color:#fff;padding:.55rem 1.05rem;border-radius:999px;font-weight:700;font-size:.88rem;text-decoration:none;box-shadow:0 6px 16px rgba(88,86,214,.45);opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;pointer-events:none}
+  #cta.on{opacity:1;transform:none;pointer-events:auto}
+  #ov{position:fixed;inset:0;z-index:5;pointer-events:none}
+  .beat{position:absolute;width:min(91%,380px);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.96);border-radius:1.6rem;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:1.2rem 1.1rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .35s}
+  .beat.on{pointer-events:auto}
+  .pos-mid{bottom:6vh}
+  .pos-top{top:8vh}
+  .pos-bot{bottom:6vh}
+  .pos-left{left:5%;transform:none;bottom:9vh;width:min(82%,300px)}
+  .pos-right{left:auto;right:5%;transform:none;bottom:9vh;width:min(82%,300px)}
+  .beat h2{font-size:1.4rem;margin-bottom:.25rem;line-height:1.1}
+  .beat p.sub{font-size:.94rem;opacity:.78;margin-bottom:.2rem;line-height:1.34}
+  #b5 .sub{font-size:.74rem;white-space:nowrap}
+  .weiter{margin-top:.85rem;font-size:.82rem;opacity:.55;font-weight:600}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:999px;padding:.72rem 1.4rem;font-family:inherit;font-size:1rem;font-weight:700;color:#fff;background:var(--indigo);cursor:pointer;box-shadow:0 8px 20px rgba(88,86,214,.35);text-decoration:none}
+  .btn.store{background:var(--tinte);font-size:.93rem;padding:.66rem 1.1rem}
+  .stores{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.7rem}
+  .intrologo svg{width:min(78vw,330px);height:auto;margin-bottom:.4rem}
+  .dslink{display:block;margin-top:1rem;font-size:.8rem;opacity:.6;color:var(--tinte);text-decoration:underline}
+  /* Routine – Hochformat wie in der App */
+  .rt{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.5rem 0 .15rem}
+  .rt .t{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;background:#f4f6fb;border:2px solid transparent;border-radius:.8rem;padding:.5rem .3rem;cursor:pointer;position:relative;transition:.25s}
+  .rt .t img{width:3rem;height:3rem;object-fit:contain}
+  .rt .t .l{font-weight:300;font-size:.62rem;line-height:1.05;text-align:center;white-space:nowrap}
+  .rt .t.ok{background:#eafaec;border-color:var(--gruen)}
+  .rt .t .hk{position:absolute;top:-.4rem;right:-.4rem;width:1.3rem;height:1.3rem;border-radius:50%;background:var(--gruen);color:#fff;display:grid;place-items:center;font-size:.85rem;transform:scale(0);transition:transform .3s cubic-bezier(.2,1.5,.4,1)}
+  .rt .t.ok .hk{transform:scale(1)}
+  .rtwin{min-height:1.15rem;font-weight:700;color:var(--gruen);font-size:.9rem}
+  /* Charaktere */
+  .chwrap{margin-top:.65rem;display:flex;flex-direction:column;gap:.55rem;overflow:hidden}
+  .chrow2{display:flex;gap:.55rem;width:max-content}
+  .chrow2 img{width:3.4rem;height:3.4rem;object-fit:contain;background:#fff;border-radius:50%;padding:.2rem;box-shadow:0 3px 8px rgba(0,0,0,.12);flex:none}
+  .chrow2.r{animation:mqr 22s linear infinite}
+  .chrow2.l{animation:mql 22s linear infinite}
+  @keyframes mqr{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  @keyframes mql{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  /* Feature */
+  .featrow{display:flex;align-items:center;gap:.7rem;text-align:left}
+  .featrow .ic{width:3rem;height:3rem;flex:none;display:grid;place-items:center;background:#f4f6fb;border-radius:50%}
+  .featrow .ic img{width:2rem;height:2rem;object-fit:contain}
+  .featrow h2{font-size:1.15rem;margin:0}
+  .featrow p{font-size:.85rem;opacity:.78;margin:0;line-height:1.3}
+  .wis{margin-top:.5rem;background:#f7f4ff;border-radius:.8rem;padding:.5rem .6rem;font-size:.82rem;text-align:left}
+  .wis b{color:var(--indigo)}
+  /* Landschaft – echte iPhone-Fotos mit Tag/Nacht-Wechsel */
+  .lwrap{position:relative;height:300px;aspect-ratio:500/1082;margin:.2rem auto .5rem;border-radius:1.1rem;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+  .lwrap .ph{position:absolute;inset:0;background-size:cover;background-position:center}
+  .lwrap .night{opacity:0;transition:opacity 1.8s ease}
+  /* Spiel direkt in der Karte */
+  .gstage{width:min(100%,240px);margin:.5rem auto 0}
+  .gmsg{min-height:1.2rem;font-weight:700;color:var(--gruen);font-size:.9rem;margin-top:.35rem}
+  .ghint{font-size:.84rem;opacity:.95;font-weight:600;color:var(--indigo);margin-top:.4rem}
+  .beat.on .gstage{animation:gpuls 1.7s ease-in-out infinite}
+  @keyframes gpuls{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+  .trust{font-size:.76rem;opacity:.6;margin-top:.5rem;font-weight:600}
+  /* Comic-Intro + Studie */
+  /* Comic-Panel (Feld poppt ein, Sprechblasen darueber). Bild als background-image; bis dahin Emoji-Platzhalter */
+  .cpanel{position:relative;aspect-ratio:1/1;border:4px solid #1B1B2F;border-radius:1.1rem;overflow:hidden;display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.28);opacity:0;transform:scale(.82) rotate(-2deg);background-size:cover;background-position:center;margin-bottom:.3rem}
+  .beat.on .cpanel{animation:cpop .55s cubic-bezier(.2,1.4,.4,1) forwards}
+  @keyframes cpop{to{opacity:1;transform:none}}
+  .cpanel.morn{background-color:#bfe0ff;background-image:linear-gradient(160deg,#a9d6ff,#fff0bf)}
+  .cpanel.night{background-color:#46578f;background-image:linear-gradient(160deg,#3a4c84,#6072ae)}
+  .cph{font-size:5rem;filter:drop-shadow(0 5px 9px rgba(0,0,0,.25))}
+  .cbub{position:absolute;background:#fff;border:2.5px solid #1B1B2F;border-radius:.9rem;padding:.3rem .65rem;font-weight:700;font-size:.82rem;line-height:1.15;box-shadow:0 3px 8px rgba(0,0,0,.22);max-width:64%;opacity:0}
+  .beat.on .cbub{animation:cpop .45s forwards}
+  .cbub.tl{top:7%;left:6%;animation-delay:.3s}
+  .cbub.br{bottom:8%;right:6%;animation-delay:.6s}
+  .cbub.shout{background:#FF3B30;color:#fff;border-color:#a82018}
+  .ccap{font-size:.95rem;font-weight:700;font-style:italic;color:var(--tinte);margin-top:.55rem;opacity:0}
+  .beat.on .ccap{animation:cpop .5s .8s forwards}
+  /* Comic-Seite: 2x2-Raster (Last-War-Format) */
+  .ctitle{font-weight:800;font-size:1.05rem;font-style:italic;color:var(--tinte);margin-bottom:.35rem;opacity:0}
+  .beat.on .ctitle{animation:cpop .5s forwards}
+  .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:0 auto .15rem;max-width:330px}
+  .cgrid .cpanel{margin-bottom:0;border-width:3px;border-radius:.75rem}
+  .cgrid .cph{font-size:2.6rem}
+  .cgrid .cbub{font-size:.6rem;padding:.18rem .38rem;border-width:2px;max-width:84%}
+  .beat.on .cgrid .cpanel:nth-child(2){animation-delay:.12s}
+  .beat.on .cgrid .cpanel:nth-child(3){animation-delay:.24s}
+  .beat.on .cgrid .cpanel:nth-child(4){animation-delay:.36s}
+  .study .bignum{font-size:4rem;font-weight:800;background:linear-gradient(90deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05}
+  .study .ssrc{font-size:.66rem;opacity:.5;margin-top:.6rem}
+  .jp-piece{display:inline-block;line-height:0;touch-action:none}
+  .scroll-hint{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);font-size:1.6rem;opacity:.55;z-index:6;animation:bb 1.5s infinite;pointer-events:none;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.3)}
+  @keyframes bb{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+  .konf{position:fixed;top:-10px;width:.7rem;height:1rem;z-index:40;pointer-events:none;border-radius:2px}
+  @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+  @keyframes boom{to{transform:translate(var(--tx),var(--ty)) rotate(680deg);opacity:0}}
+  /* Buntes Wellen-Finale */
+  #wave{position:fixed;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem;
+        background:
+          radial-gradient(circle at 50% 38%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.9) 30%,transparent 64%),
+          conic-gradient(from 0deg,#FF3B30,#FF9500,#FFC72C,#2ECF6E,#2D7CF6,#5856D6,#AF52DE,#FF3D77,#FF3B30);
+        clip-path:circle(0% at 50% 60%);transition:clip-path 1.05s cubic-bezier(.7,0,.3,1);pointer-events:none}
+  #wave.on{clip-path:circle(150% at 50% 60%);pointer-events:auto}
+  #wave .card{background:#fff;border-radius:1.8rem;padding:1.6rem 1.4rem;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:340px;transform:scale(.85);opacity:0;transition:transform .6s .35s cubic-bezier(.2,1.4,.4,1),opacity .5s .35s}
+  #wave.on .card{transform:none;opacity:1}
+  #wave .intrologo svg{width:min(68vw,260px)}
+  #wave .bald{font-size:1.1rem;font-weight:700;color:var(--indigo);letter-spacing:.04em;text-transform:uppercase;margin-bottom:.5rem}
+  #wave .sfair{font-size:1.35rem;font-weight:700;color:var(--tinte);margin-top:.25rem}
+  #wave .sub2{font-size:.95rem;opacity:.8;margin:.5rem 0 .2rem}
+  #wave .dslink{opacity:.6}
+</style>
+</head>
+<body>
+<div id="c"></div>
+<button id="snd" aria-label="Sound">🔇</button>
+<audio id="bgm" src="audio/musik.mp3" loop preload="none"></audio>
+<div id="lang"><button data-l="de">DE</button><button data-l="en">EN</button><button data-l="gr">GR</button></div>
+<div id="prog"></div>
+<a id="cta" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App holen</a>
+
+<div class="hud" id="hud">
+  <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
+    <defs><style>.kdzwm{font-family:'Fredoka',sans-serif;font-weight:700;font-size:230px;letter-spacing:-14px;paint-order:stroke fill;stroke:#1B1B2F;stroke-width:10;stroke-linejoin:round}</style></defs>
+    <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
+    <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
+  </svg>
+</div>
+
+<div id="ov"></div>
+<div class="scroll-hint" id="hint">⌄</div>
+
+<div id="wave"><div class="card">
+  <div class="bald" id="wbald">Bald verfügbar</div>
+  <div class="intrologo">
+    <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-label="kidzlist">
+      <text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text>
+      <text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text>
+    </svg>
+  </div>
+  <div class="sfair" id="wsfair">Sicher & Fair</div>
+  <div class="sub2" id="wsub2">Für Eltern und Kinder gebaut.<br>Ohne Werbung, ohne Tracking.</div>
+  <div class="stores">
+    <a class="btn store" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App Store</a>
+    <a class="btn store" href="#" onclick="return false">Google Play</a>
+  </div>
+  <a class="dslink" id="wds" href="https://jiggyjackson-code.github.io/kidzlist-recht/" target="_blank" rel="noopener">Datenschutz & Nutzungsbedingungen</a>
+</div></div>
+
+<div id="scroller"></div>
+
+<script src="lib/three.min.js"></script>
+<script>
+const IMG="assets/img/";
+// ===== 3D-Szene =====
+const scene=new THREE.Scene(); const DAY=new THREE.Color(0xdcefff),NIGHT=new THREE.Color(0x101c44);
+scene.background=DAY.clone(); scene.fog=new THREE.Fog(DAY.clone().getHex(),42,98);
+let W=innerWidth,H=innerHeight,aspect=W/H,D=15;
+const cam=new THREE.OrthographicCamera(-D*aspect,D*aspect,D,-D,0.1,500);
+const amb=new THREE.AmbientLight(0xffffff,0.85);scene.add(amb);
+const dl=new THREE.DirectionalLight(0xfff2d8,0.85);dl.position.set(12,26,6);dl.castShadow=true;
+dl.shadow.mapSize.set(1024,1024);[dl.shadow.camera.left,dl.shadow.camera.right,dl.shadow.camera.top,dl.shadow.camera.bottom]=[-45,45,45,-45];scene.add(dl);
+const rnd=new THREE.WebGLRenderer({antialias:true,alpha:true});rnd.setSize(W,H);rnd.setPixelRatio(Math.min(2,devicePixelRatio));rnd.shadowMap.enabled=true;rnd.shadowMap.type=THREE.PCFSoftShadowMap;
+document.getElementById('c').appendChild(rnd.domElement);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(340,580),new THREE.MeshStandardMaterial({color:0x96dd83}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const pts=[];for(let i=0;i<=32;i++)pts.push(new THREE.Vector3(Math.sin(i*0.5)*8,0.02,-i*7));
+const curve=new THREE.CatmullRomCurve3(pts);
+// 8 Linien nebeneinander in den 8 Logo-Farben (statt eines Fahrzeugs) – bauen sich nach vorne auf
+const LANE8=[0xFF3B30,0xFF9500,0xFFC72C,0x2ECF6E,0x2D7CF6,0x5856D6,0xAF52DE,0xFF3D77];
+const lanes=[];
+for(let L=0;L<8;L++){const off=(L-3.5)*0.62;
+  const lp=pts.map((p,i)=>{const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];
+    const tx=b.x-a.x,tz=b.z-a.z,ln=Math.hypot(tx,tz)||1,nx=-tz/ln,nz=tx/ln;
+    return new THREE.Vector3(p.x+nx*off,1.35,p.z+nz*off);});
+  const lc=new THREE.CatmullRomCurve3(lp);
+  const tb=new THREE.Mesh(new THREE.TubeGeometry(lc,300,0.34,6,false),new THREE.MeshBasicMaterial({color:LANE8[L]}));
+  tb.scale.y=0.7;scene.add(tb);lanes.push(tb);}
+const laneMax=lanes[0].geometry.index.count;
+// weicher Schatten unter dem Regenbogen -> er wirkt schwebend
+const shadow=new THREE.Mesh(new THREE.TubeGeometry(curve,300,2.1,8,false),new THREE.MeshBasicMaterial({color:0x0e2e0e,transparent:true,opacity:0.11}));shadow.scale.y=0.008;shadow.position.y=0.05;scene.add(shadow);   // schmaler + blasser -> hoeher schwebender Regenbogen
+const shadowMax=shadow.geometry.index.count;
+// Deko
+const COLS=[0xff8aa0,0x8ac7ff,0xffd23f,0xa0e090,0xc6a8ff,0xff9f6e];
+function haus(x,z,w,h,col){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),new THREE.MeshStandardMaterial({color:col}));b.position.y=h/2;b.castShadow=true;const d=new THREE.Mesh(new THREE.ConeGeometry(w*0.82,h*0.5,4),new THREE.MeshStandardMaterial({color:0xffffff}));d.position.y=h+h*0.25;d.rotation.y=Math.PI/4;d.castShadow=true;g.add(b,d);g.position.set(x,0,z);scene.add(g);}
+function baum(x,z,s){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.18*s,0.22*s,1.1*s,6),new THREE.MeshStandardMaterial({color:0xb07b4a}));st.position.y=0.55*s;const kr=new THREE.Mesh(new THREE.ConeGeometry(0.9*s,1.8*s,8),new THREE.MeshStandardMaterial({color:0x59b85a}));kr.position.y=1.7*s;kr.castShadow=true;g.add(st,kr);g.position.set(x,0,z);scene.add(g);}
+for(let i=2;i<31;i++){const c=curve.getPointAt(i/32),side=(i%2?1:-1);if(i%2)haus(c.x+side*(6+Math.random()*4),c.z,2+Math.random()*1.5,2.5+Math.random()*4,COLS[i%6]);else baum(c.x+side*(5+Math.random()*4),c.z,0.8+Math.random()*0.7);baum(c.x-side*(7+Math.random()*5),c.z+3,0.7+Math.random()*0.5);}
+// ===== WOW: Berge, Blumen, Wolken, schwebende Bluetenblaetter =====
+const FLOWCOL=[0xff6b9d,0xffd23f,0xff9f43,0xa55eea,0xffffff,0xff7979,0x4dd0e1];
+function blume(x,z){const g=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,0.55,4),new THREE.MeshStandardMaterial({color:0x4a9d4a}));st.position.y=0.27;const bl=new THREE.Mesh(new THREE.SphereGeometry(0.17,7,7),new THREE.MeshStandardMaterial({color:FLOWCOL[Math.floor(Math.random()*FLOWCOL.length)]}));bl.position.y=0.58;g.add(st,bl);g.position.set(x,0,z);scene.add(g);}
+function busch(x,z,s){const m=new THREE.Mesh(new THREE.SphereGeometry(s,7,6),new THREE.MeshStandardMaterial({color:0x6cc04a,flatShading:true}));m.position.set(x,s*0.7,z);m.scale.y=0.8;m.castShadow=true;scene.add(m);}
+for(let i=1;i<32;i++){const c=curve.getPointAt(i/32);for(let k=0;k<3;k++){const s=(k%2?1:-1);blume(c.x+s*(3.6+Math.random()*9),c.z+(Math.random()-0.5)*6);}if(i%3===0)busch(c.x+(i%2?1:-1)*(4+Math.random()*6),c.z+2,0.5+Math.random()*0.5);}
+const BERG=[0x8fb98f,0x7aa97a,0xa7c7a7];
+const bergG=new THREE.Group();scene.add(bergG);   // Berge folgen der Kamera -> bleiben immer am Horizont
+for(let i=0;i<18;i++){const s=(i%2?1:-1),h=11+Math.random()*11;const m=new THREE.Mesh(new THREE.ConeGeometry(h*0.85,h,6),new THREE.MeshStandardMaterial({color:BERG[i%3],flatShading:true}));m.position.set(s*(28+Math.random()*13),h/2,-60+i*7);bergG.add(m);}
+const CLOUDS=[];
+// Wolken-Kugel mit sanfter Schattierung (oben hell, unten leicht grau) -> Volumen, aber licht-unabhaengig (dunkelt bei Nacht nicht ab)
+function cloudGeo(r){const g=new THREE.SphereGeometry(r,10,9);const pos=g.attributes.position,col=[];for(let i=0;i<pos.count;i++){const ny=(pos.getY(i)/r+1)/2,sh=0.75+ny*0.25;col.push(sh,sh,Math.min(1,sh*1.02));}g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));return g;}
+function wolke(x,y,z,s){const g=new THREE.Group();[[0,0,0,1],[1,0.1,0,0.72],[-1,0.1,0,0.72],[0.5,0.45,0.2,0.6],[-0.4,0.4,-0.2,0.55]].forEach(c=>{const b=new THREE.Mesh(cloudGeo(c[3]*s),new THREE.MeshBasicMaterial({vertexColors:true}));b.position.set(c[0]*s,c[1]*s,c[2]*s);g.add(b);});g.position.set(x,y,z);g.userData.sp=0.005+Math.random()*0.006;scene.add(g);CLOUDS.push(g);}
+for(let i=0;i<14;i++){const c=curve.getPointAt(i/13);wolke(c.x+(Math.random()-0.5)*44,12+Math.random()*10,c.z-2,1.4+Math.random()*1.4);}
+const PETALS=[];
+for(let i=0;i<44;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(0.1,5,5),new THREE.MeshStandardMaterial({color:FLOWCOL[i%FLOWCOL.length]}));p.position.set((Math.random()-0.5)*60,1+Math.random()*9,-Math.random()*224);p.userData={sx:(Math.random()-0.5)*0.02,ph:Math.random()*6.28};scene.add(p);PETALS.push(p);}
+function logoTex(){const cv=document.createElement('canvas');cv.width=512;cv.height=180;const x=cv.getContext('2d');
+  x.fillStyle='#ffffff';x.fillRect(0,0,512,180);x.textAlign='center';x.textBaseline='middle';x.font='700 120px Fredoka, sans-serif';
+  const cols=['#FF3B30','#FF9500','#FFC72C','#2ECF6E','#2D7CF6','#5856D6','#AF52DE','#FF3D77'],w='kidzlist';
+  let tot=0;for(const ch of w)tot+=x.measureText(ch).width-12;let cx=256-tot/2;
+  x.lineWidth=9;x.strokeStyle='#1B1B2F';x.lineJoin='round';
+  for(let k=0;k<w.length;k++){const cw=x.measureText(w[k]).width-12;const px=cx+cw/2;x.strokeText(w[k],px,96);x.fillStyle=cols[k];x.fillText(w[k],px,96);cx+=cw;}
+  const t=new THREE.CanvasTexture(cv);t.anisotropy=4;return t;}
+// Ziel: Sternenfeld (wird sichtbar, wenn es Nacht geworden ist) + Logo-Schild
+const STARS=[];
+(function ende(){const end=curve.getPointAt(0.998);
+  const sc=[0xffffff,0xfff7cc,0xFFC72C,0xFF9500,0x2ECF6E,0x2D7CF6,0xAF52DE,0xFF3D77];
+  for(let i=0;i<90;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(0.12+Math.random()*0.22,6,6),new THREE.MeshBasicMaterial({color:sc[i%sc.length]}));
+    s.position.set(end.x+(Math.random()-0.5)*46,4+Math.random()*28,end.z-6+(Math.random()-0.5)*40);s.userData.ph=Math.random()*6.28;STARS.push(s);scene.add(s);}
+  const big=new THREE.Mesh(new THREE.SphereGeometry(1.6,18,18),new THREE.MeshBasicMaterial({color:0xfff7cc}));big.position.set(end.x,14,end.z-11);scene.add(big);
+  const board=new THREE.Mesh(new THREE.BoxGeometry(9,3.1,0.3),new THREE.MeshBasicMaterial({map:logoTex()}));board.position.set(end.x,3.8,end.z-1);scene.add(board);window._board=board;   // Banner direkt am Weg-Ende
+  [-3.6,3.6].forEach(dx=>{const po=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,4.8,8),new THREE.MeshStandardMaterial({color:0xb07b4a}));po.position.set(end.x+dx,2.3,end.z-1);scene.add(po);});})();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(window._board){window._board.material.map=logoTex();window._board.material.needsUpdate=true;}});   // Logo-Schrift (Fredoka) erst nach Font-Load in die Banner-Textur
+// Wolke an der Spitze – zieht die Linien hinter sich her
+const tip=new THREE.Group();
+[[0,0,0,1.75],[2.1,0.1,0,1.3],[-2.1,0.1,0,1.3],[1.05,0.6,0.4,1.15],[-1.05,0.6,-0.4,1.15],[0,0.32,1.25,1.15],[0,0.36,-1.15,1.08],[3.3,0,0.1,0.92],[-3.3,0,-0.1,0.92]].forEach(c=>{
+  const b=new THREE.Mesh(cloudGeo(c[3]),new THREE.MeshBasicMaterial({vertexColors:true}));
+  b.position.set(c[0],c[1],c[2]);tip.add(b);});
+scene.add(tip);
+const CAM_OFF=new THREE.Vector3(15,17,15);
+function setCurveT(t){t=Math.max(0,Math.min(0.999,t));const p=curve.getPointAt(t);tip.position.set(p.x,1.5,p.z);cam.position.set(p.x+CAM_OFF.x,CAM_OFF.y,p.z+CAM_OFF.z);cam.lookAt(p.x,0,p.z-4);}
+
+const STORES=`<div class="stores"><a class="btn store" href="https://apps.apple.com/app/id6780948441" target="_blank" rel="noopener">App Store</a><a class="btn store" href="#" onclick="return false">Google Play</a></div>`;
+const LAND=(t,m)=>`<div class="lwrap"><div class="ph" style="background-image:url('${IMG}land/${t}-tag.webp')"></div><div class="ph night" style="background-image:url('${IMG}land/${t}-nacht.webp')"></div></div><h2 style="font-size:1.2rem">${m}</h2>`;
+
+const LOGO=`<div class="intrologo"><svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg"><text class="kdzwm" text-anchor="middle" x="610" y="270" fill="#1B1B2F">kidzlist</text><text class="kdzwm" text-anchor="middle" x="600" y="260"><tspan fill="#FF3B30">k</tspan><tspan fill="#FF9500">i</tspan><tspan fill="#FFC72C">d</tspan><tspan fill="#2ECF6E">z</tspan><tspan fill="#2D7CF6">l</tspan><tspan fill="#5856D6">i</tspan><tspan fill="#AF52DE">s</tspan><tspan fill="#FF3D77">t</tspan></text></svg></div>`;
+const T={
+ de:{intro_sub:"Routine für Kinder – Aufgaben mit Belohnung & Spaß",intro_w:"So erlebt Ihr Kind die App – scroll los ⌄",problem_h:"Kennst du das?",problem_p:"Morgens Theater, Zähneputzen ein Kampf, abends nie freiwillig ins Bett?",comic_sleep:"Zeit zum Schlafen!",comic_no:"Nein! Nein! 😫",comic_wake:"Aufstehen und anziehen!",comic_routine:"Zeit für die Abendroutine! 🎵",comic_morningroutine:"Zeit für die Morgenroutine! 🎵",comic_yay:"Juhu! 😄",comic_more:"Nur noch ein bisschen!",comic_logo:"Juhu, ein Stern! ⭐",comic_done:"Alles geschafft! 🏆",cap1:"Jeden Morgen das gleiche Theater?",cap2:"Und abends genauso?",cap3:"Mit Kidzlist wird die Routine zum Spiel.",cap4:"Sammeln, schaffen, stolz sein – ganz ohne Druck.",study_txt:"von über 300.000 Familien sagen: Mit spielerischen Aufgaben klappt die Routine besser.",study_src:"(Quelle wird noch ergänzt)",chars_h:"Jedes Kind ein Profil",chars_sub:"Verschiedene Charaktere – eigene Farbe und eigenes Logo",juni:"Juni",juni_sub:"Tagsüber hell und freundlich<br>Nachts mit schönem Sternenhimmel",dez:"Dezember",dez_sub:"Jeden Monat eine neue Welt.",morgen_h:"Morgenroutine",morgen_sub:"Tipp die Aufgaben an – ganz allein.",abend_h:"Abendroutine",abend_sub:"Und abends genauso – Schritt für Schritt.",sammeln_h:"Sammeln & Belohnung",sammeln_p:"Beide Routinen geschafft = ein Logo gesammelt<br>Ganz ohne Druck",weish_h:"Weisheiten für den Tag",weish_p:"Zum Vorlesen, morgens und abends.",weish_m:"Morgens:",weish_e:"Abends:",weish_ms:"„Ein gutes Frühstück gibt dir Kraft zum Spielen.“",weish_es:"„Saubere Zähne träumen süßer.“",team_h:"Team-Modus",team_p:"Mehrere Kinder, ein Gerät –<br>jeder hakt selbst ab.",plan_h:"Tagesplaner",plan_p:"Freier Plan für besondere Tage –<br>mit Uhrzeit und Bild.",belohn_h:"Belohnung",belohn_p:"Gesammelte Logos gibst du für diese 4 Spiele aus.",cta:"App holen",trust:"Ohne Werbung · ohne Tracking",g_swap:"Tauschen",g_insert:"Einsetzen",g_scratch:"Freikratzen",g_catch:"Auffangen",h_swap:"Tippe zwei Teile zum Tauschen",h_insert:"Zieh die Teile ins richtige Feld",h_scratch:"Mit dem Finger freikratzen",h_catch:"Korb mit dem Finger schieben",win:"Geschafft! 🎉",bald:"Bald verfügbar",sfair:"Sicher & Fair",sub2:"Für Eltern und Kinder gebaut.<br>Ohne Werbung, ohne Tracking.",ds:"Datenschutz & Nutzungsbedingungen",
+   morning:[["1f48b","Guten-Morgen-Kuss"],["1f6bd","Auf die Toilette"],["1f4a7","Wasser trinken"],["1f6cf-fe0f","Bett machen"],["1f963","Frühstücken"],["1f455","Anziehen"],["1f9b7","Zähne putzen"],["1f487","Haare machen"]],evening:[["1f9f9","Zimmer aufräumen"],["1f319","Pyjama anziehen"],["1f6bd","Auf die Toilette"],["1f9b7","Zähne putzen"],["1f45a","Kleidung vorbereiten"],["1f392","Rucksack vorbereiten"],["1f4d6","Geschichte lesen"],["1f618","Gute-Nacht-Kuss"]]},
+ en:{intro_sub:"Routine for kids – tasks with rewards & fun",intro_w:"See how your child experiences the app – scroll ⌄",problem_h:"Sound familiar?",problem_p:"Morning drama, a fight over teeth, never off to bed willingly?",comic_sleep:"Time for bed!",comic_no:"No! No! 😫",comic_wake:"Time to get up and dressed!",comic_routine:"Time for the evening routine! 🎵",comic_morningroutine:"Time for the morning routine! 🎵",comic_yay:"Yay! 😄",comic_more:"Just a bit longer!",comic_logo:"Yay, a star! ⭐",comic_done:"All done! 🏆",cap1:"Every morning the same drama?",cap2:"And the same every evening?",cap3:"With Kidzlist the routine becomes a game.",cap4:"Collect, achieve, be proud – with no pressure.",study_txt:"of 300,000+ families say: playful tasks make the routine work better.",study_src:"(source to be added)",chars_h:"Every child a profile",chars_sub:"Various characters – own colour and own logo",juni:"June",juni_sub:"Bright and friendly by day<br>A beautiful starry sky at night",dez:"December",dez_sub:"A new world every month.",morgen_h:"Morning routine",morgen_sub:"Tap the tasks – all by yourself.",abend_h:"Evening routine",abend_sub:"And the same in the evening – step by step.",sammeln_h:"Collect & reward",sammeln_p:"Both routines done = one logo collected<br>No pressure at all",weish_h:"Words of wisdom",weish_p:"To read aloud, morning and evening.",weish_m:"Morning:",weish_e:"Evening:",weish_ms:"“A good breakfast gives you energy to play.”",weish_es:"“Clean teeth dream sweeter.”",team_h:"Team mode",team_p:"Several kids, one device –<br>each ticks off their own.",plan_h:"Day planner",plan_p:"A free plan for special days –<br>with time and picture.",belohn_h:"Reward",belohn_p:"Spend your collected logos on these 4 games.",cta:"Get the app",trust:"No ads · no tracking",g_swap:"Swap",g_insert:"Insert",g_scratch:"Scratch",g_catch:"Catch",h_swap:"Tap two pieces to swap",h_insert:"Drag the pieces into the right slot",h_scratch:"Scratch with your finger",h_catch:"Move the basket with your finger",win:"Done! 🎉",bald:"Coming soon",sfair:"Safe & Fair",sub2:"Built for parents and children.<br>No ads, no tracking.",ds:"Privacy & Terms",
+   morning:[["1f48b","Good-morning kiss"],["1f6bd","Go to the toilet"],["1f4a7","Drink water"],["1f6cf-fe0f","Make the bed"],["1f963","Have breakfast"],["1f455","Get dressed"],["1f9b7","Brush teeth"],["1f487","Do hair"]],evening:[["1f9f9","Tidy the room"],["1f319","Put on pyjamas"],["1f6bd","Go to the toilet"],["1f9b7","Brush teeth"],["1f45a","Lay out clothes"],["1f392","Pack the backpack"],["1f4d6","Read a story"],["1f618","Good-night kiss"]]},
+ gr:{intro_sub:"Ρουτίνα για παιδιά – δουλειές με επιβράβευση & κέφι",intro_w:"Δείτε πώς ζει το παιδί σας την εφαρμογή – κυλήστε ⌄",problem_h:"Σου θυμίζει κάτι;",problem_p:"Πρωινό δράμα, μάχη με τα δόντια, ποτέ πρόθυμα για ύπνο;",comic_sleep:"Ώρα για ύπνο!",comic_no:"Όχι! Όχι! 😫",comic_wake:"Ώρα να σηκωθείς!",comic_routine:"Ώρα για τη βραδινή ρουτίνα! 🎵",comic_morningroutine:"Ώρα για την πρωινή ρουτίνα! 🎵",comic_yay:"Γιούπι! 😄",comic_more:"Λίγο ακόμα!",comic_logo:"Γιούπι, ένα αστέρι! ⭐",comic_done:"Τα κατάφερα! 🏆",cap1:"Κάθε πρωί το ίδιο δράμα;",cap2:"Και κάθε βράδυ το ίδιο;",cap3:"Με το Kidzlist η ρουτίνα γίνεται παιχνίδι.",cap4:"Μάζεψε, κατάφερε, καμάρωσε – χωρίς πίεση.",study_txt:"από 300.000+ οικογένειες λένε: με παιχνίδι η ρουτίνα πετυχαίνει καλύτερα.",study_src:"(η πηγή θα προστεθεί)",chars_h:"Κάθε παιδί ένα προφίλ",chars_sub:"Διάφοροι χαρακτήρες – δικό σου χρώμα και λογότυπο",juni:"Ιούνιος",juni_sub:"Φωτεινό και χαρούμενο τη μέρα<br>Όμορφος έναστρος ουρανός τη νύχτα",dez:"Δεκέμβριος",dez_sub:"Κάθε μήνα ένας νέος κόσμος.",morgen_h:"Πρωινή ρουτίνα",morgen_sub:"Πάτα τις δουλειές – εντελώς μόνος σου.",abend_h:"Βραδινή ρουτίνα",abend_sub:"Και το βράδυ το ίδιο – βήμα βήμα.",sammeln_h:"Συλλογή & επιβράβευση",sammeln_p:"Και οι δύο ρουτίνες = ένα λογότυπο<br>Χωρίς καμία πίεση",weish_h:"Σοφία για τη μέρα",weish_p:"Για ανάγνωση, πρωί και βράδυ.",weish_m:"Πρωί:",weish_e:"Βράδυ:",weish_ms:"«Ένα καλό πρωινό σου δίνει δύναμη για παιχνίδι.»",weish_es:"«Καθαρά δόντια ονειρεύονται γλυκότερα.»",team_h:"Λειτουργία ομάδας",team_p:"Πολλά παιδιά, μία συσκευή –<br>ο καθένας τσεκάρει μόνος.",plan_h:"Ημερήσιο πρόγραμμα",plan_p:"Ελεύθερο πρόγραμμα για ξεχωριστές μέρες –<br>με ώρα και εικόνα.",belohn_h:"Επιβράβευση",belohn_p:"Ξόδεψε τα μαζεμένα λογότυπα στα 4 παιχνίδια.",cta:"Λήψη",trust:"Χωρίς διαφημίσεις · χωρίς παρακολούθηση",g_swap:"Ανταλλαγή",g_insert:"Τοποθέτηση",g_scratch:"Ξύσιμο",g_catch:"Πιάσιμο",h_swap:"Πάτα δύο κομμάτια για ανταλλαγή",h_insert:"Σύρε τα κομμάτια στη σωστή θέση",h_scratch:"Ξύσε με το δάχτυλο",h_catch:"Σύρε το καλάθι με το δάχτυλο",win:"Τα κατάφερες! 🎉",bald:"Σύντομα διαθέσιμο",sfair:"Ασφαλές & Δίκαιο",sub2:"Φτιαγμένο για γονείς και παιδιά.<br>Χωρίς διαφημίσεις, χωρίς παρακολούθηση.",ds:"Απόρρητο & Όροι χρήσης",
+   morning:[["1f48b","Φιλί καλημέρας"],["1f6bd","Πάω τουαλέτα"],["1f4a7","Πίνω νερό"],["1f6cf-fe0f","Στρώνω κρεβάτι"],["1f963","Τρώω πρωινό"],["1f455","Ντύνομαι"],["1f9b7","Βουρτσίζω δόντια"],["1f487","Φτιάχνω μαλλιά"]],evening:[["1f9f9","Τακτοποιώ δωμάτιο"],["1f319","Βάζω πιτζάμες"],["1f6bd","Πάω τουαλέτα"],["1f9b7","Βουρτσίζω δόντια"],["1f45a","Ετοιμάζω ρούχα"],["1f392","Ετοιμάζω σακίδιο"],["1f4d6","Διαβάζω ιστορία"],["1f618","Φιλί καληνύχτας"]]}
+};
+let L=({el:'gr',en:'en',de:'de'})[(navigator.language||'de').slice(0,2).toLowerCase()]||'de';
+let TT=T[L];
+function makeBeats(t){return[
+ {pos:'mid',html:`<div class="ctitle">${t.cap1}</div><div class="cgrid"><div class="cpanel morn" data-img="comic/morgen-problem-1"><span class="cph">🛏️</span><div class="cbub tl">${t.comic_wake}</div></div><div class="cpanel morn" data-img="comic/morgen-problem-2"><span class="cph">🙅</span><div class="cbub br shout">${t.comic_no}</div></div><div class="cpanel night" data-img="comic/abend-problem-1"><span class="cph">🧸</span><div class="cbub tl">${t.comic_sleep}</div></div><div class="cpanel night" data-img="comic/abend-problem-2"><span class="cph">😫</span><div class="cbub br shout">${t.comic_more}</div></div></div><div class="ccap">${t.cap2}</div><div class="weiter">⌄</div>`},
+ {pos:'mid',html:`<div class="study"><div class="bignum">90%</div><p class="sub">${t.study_txt}</p><div class="ssrc">${t.study_src}</div></div><div class="weiter">⌄</div>`},
+ {pos:'mid',html:`<div class="ctitle">${t.cap3}</div><div class="cgrid"><div class="cpanel morn" data-img="comic/morgen-app-1"><span class="cph">📱</span><div class="cbub tl">${t.comic_morningroutine}</div></div><div class="cpanel morn" data-img="comic/morgen-app-2"><span class="cph">⭐</span><div class="cbub br">${t.comic_logo}</div></div><div class="cpanel night" data-img="comic/abend-app-1"><span class="cph">🌙</span><div class="cbub tl">${t.comic_routine}</div></div><div class="cpanel night" data-img="comic/abend-app-2"><span class="cph">🏆</span><div class="cbub br">${t.comic_done}</div></div></div><div class="ccap">${t.cap4}</div><div class="weiter">⌄</div>`},
+ {pos:'mid',html:`${LOGO}<p class="sub">${t.intro_sub}</p>${STORES}<div class="trust">${t.trust}</div><div class="weiter">${t.intro_w}</div>`},
+ {pos:'mid',html:`<h2>${t.chars_h}</h2><p class="sub">${t.chars_sub}</p><div class="chwrap"><div class="chrow2 r" id="chrowA"></div><div class="chrow2 l" id="chrowB"></div></div>`},
+ {pos:'left',land:true,html:LAND('juni',t.juni)+`<p class="sub">${t.juni_sub}</p>`},
+ {pos:'right',land:true,html:LAND('dez',t.dez)+`<p class="sub">${t.dez_sub}</p>`},
+ {pos:'mid',html:`<h2>${t.morgen_h}</h2><p class="sub">${t.morgen_sub}</p><div class="rt" id="rtMorgen"></div><div class="rtwin" id="winMorgen"></div>`},
+ {pos:'mid',html:`<h2>${t.abend_h}</h2><p class="sub">${t.abend_sub}</p><div class="rt" id="rtAbend"></div><div class="rtwin" id="winAbend"></div>`},
+ {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}logos/2b50.webp" alt=""></div><div><h2>${t.sammeln_h}</h2><p>${t.sammeln_p}</p></div></div>`},
+ {pos:'bot',html:`<div class="featrow"><div class="ic"><img src="${IMG}tasks/1f4d6.webp" alt=""></div><div><h2>${t.weish_h}</h2><p>${t.weish_p}</p></div></div><div class="wis"><b>${t.weish_m}</b> ${t.weish_ms}<br><b>${t.weish_e}</b> ${t.weish_es}</div>`},
+ {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/team.webp" alt=""></div><div><h2>${t.team_h}</h2><p>${t.team_p}</p></div></div>`},
+ {pos:'bot',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/kalender.webp" alt=""></div><div><h2>${t.plan_h}</h2><p>${t.plan_p}</p></div></div>`},
+ {pos:'top',html:`<div class="featrow"><div class="ic"><img src="${IMG}ui/wuerfel.webp" alt=""></div><div><h2>${t.belohn_h}</h2><p>${t.belohn_p}</p></div></div>`},
+ {pos:'mid',game:'swap',img:'puzzle/maerchen/01',html:`<h2>${t.g_swap}</h2><div class="gstage"></div><div class="gmsg"></div>`},
+ {pos:'mid',game:'insert',img:'puzzle/helden/01',html:`<h2>${t.g_insert}</h2><div class="gstage"></div><div class="gmsg"></div>`},
+ {pos:'mid',game:'scratch',img:'puzzle/tiere/01',html:`<h2>${t.g_scratch}</h2><div class="gstage"></div><div class="gmsg"></div>`},
+ {pos:'mid',game:'catch',img:'logos/2b50',html:`<h2>${t.g_catch}</h2><div class="gstage"></div><div class="gmsg"></div>`}
+];}
+const BEATS=makeBeats(TT);
+
+const ov=document.getElementById('ov');
+BEATS.forEach((b,i)=>{const d=document.createElement('div');d.className='beat pos-'+b.pos;d.id='b'+i;d.innerHTML=b.html;ov.appendChild(d);b.el=d;});
+// Abstaende grosszuegig verteilen (Landschaft laenger, Spiele klar getrennt -> kein Ueberlappen)
+[0,0.09,0.17,0.25,0.31,0.37,0.42,0.48,0.54,0.58,0.62,0.65,0.69,0.73,0.79,0.85,0.90,0.95].forEach((a,i)=>{if(BEATS[i])BEATS[i].at=a;});   // grosse Beats mit groesserem Abstand
+[0,2,4,5,6,7,8,14,15,16,17].forEach(i=>{if(BEATS[i])BEATS[i].big=1;});   // grosse Popups (Comic/Charaktere/Landschaft/Routinen/Spiele): mehr Wolke davor   // 0-4 Comic+Studie, 5 Logo, ...; catch 0.93 -> Wegstueck ins Ziel
+BEATS[4].wide=3;   // "Jedes Kind ein Profil" 3x so lange voll sichtbar
+
+// Routinen + Charaktere fuellen (sprachabhaengig), Popup-Texte, Sprachwechsel
+function fillRoutine(boxId,tasks,winId){const box=document.getElementById(boxId);if(!box)return;box.innerHTML='';
+  tasks.forEach(t=>{const e=document.createElement('div');e.className='t';e.innerHTML=`<img src="${IMG}tasks/${t[0]}.webp" alt=""><span class="l">${t[1]}</span><span class="hk">✓</span>`;
+    e.onclick=()=>{e.classList.toggle('ok');const n=box.querySelectorAll('.t.ok').length,w=document.getElementById(winId);if(n===tasks.length){w.textContent=TT.win;konf();}else w.textContent='';};box.appendChild(e);});}
+const CHARS=["unicorn","princess","Fee","mermaid","Drache","Schmetterling","hero","Roboter","ritter","pirat","ninja","samurai","aerztin","astronautin","pilot","polizist","feuerwehr","saengerin"];
+function fillChars(){['chrowA','chrowB'].forEach((id,ri)=>{const el=document.getElementById(id);if(!el)return;const arr=CHARS.slice(ri*9,ri*9+9);const h=arr.map(c=>`<img src="${IMG}chars/${c}.webp" loading="lazy" alt="">`).join('');el.innerHTML=h+h;});}
+function applyPopup(){const s=(id,v,html)=>{const e=document.getElementById(id);if(e){if(html)e.innerHTML=v;else e.textContent=v;}};s('wbald',TT.bald);s('wsfair',TT.sfair);s('wsub2',TT.sub2,1);s('wds',TT.ds);s('cta',TT.cta);}
+function loadComic(){document.querySelectorAll('.cpanel[data-img]').forEach(p=>{const name=p.getAttribute('data-img');const im=new Image();im.onload=()=>{p.style.backgroundImage="url('"+IMG+name+".webp')";const ph=p.querySelector('.cph');if(ph)ph.style.display='none';};im.src=IMG+name+'.webp';});}   // echte Comic-Bilder laden, sobald vorhanden; bis dahin Emoji-Platzhalter
+function renderDynamic(){fillRoutine('rtMorgen',TT.morning,'winMorgen');fillRoutine('rtAbend',TT.evening,'winAbend');fillChars();applyPopup();loadComic();}
+function setLang(l){L=l;TT=T[l];const nb=makeBeats(TT);BEATS.forEach((b,i)=>{if(b.clean){b.clean();b.clean=null;}b.live=false;b.won=false;b.el.innerHTML=nb[i].html;});renderDynamic();document.querySelectorAll('#lang button').forEach(x=>x.classList.toggle('on',x.dataset.l===l));}
+document.querySelectorAll('#lang button').forEach(x=>x.onclick=()=>setLang(x.dataset.l));
+setLang(L);
+
+// ===== Durchgehende Fahrt + Beats + Tag→Nacht + Spiele im Beat =====
+// Snap-Navigation: ein Wisch/Scroll/Tastendruck = ein Punkt weiter (kein muehsames Endlos-Scrollen)
+document.body.style.overflow='hidden';
+if('scrollRestoration' in history)history.scrollRestoration='manual';scrollTo(0,0);
+let curT=0,tgtT=0,waveOn=false,curBeat=0;
+const NB=BEATS.length,HALF=0.024;
+const GAMES={swap:gSwap,insert:gInsert,scratch:gScratch,catch:gCatch};
+function goBeat(dir){const n=Math.max(0,Math.min(NB,curBeat+dir));if(n===curBeat)return;curBeat=n;tgtT=(curBeat>=NB)?1:BEATS[curBeat].at;}
+function updateBeats(t){
+  BEATS.forEach(b=>{
+    if(b.won){b.el.style.opacity='0';b.el.classList.remove('on');return;}
+    const dist=Math.abs(t-b.at),r=b.big?0.018:0.03;   // grosse Popups erscheinen erst naeher am Punkt -> deutlich mehr Wolke davor
+    const o=dist<r*0.4?1:Math.max(0,1-(dist-r*0.4)/(r*0.6));
+    b.el.style.opacity=o;b.el.classList.toggle('on',o>0.55);
+    if(b.land){const ni=b.el.querySelector('.night');if(ni)ni.style.opacity=(o>0.9)?'1':'0';}   // voll angekommen -> langsam Nacht (CSS-Transition)
+  });
+  let bg=null,bd=9;for(const b of BEATS)if(b.game&&!b.won){const d=Math.abs(t-b.at);if(d<bd){bd=d;bg=b;}}
+  for(const b of BEATS){if(!b.game)continue;
+    if(b===bg&&bd<0.013&&!b.won){if(!b.live){b.live=true;b.clean=GAMES[b.game](b.el.querySelector('.gstage'),IMG+b.img+'.webp',b.el.querySelector('.gmsg'),b);}}
+    else if(b.live){b.live=false;if(b.clean){b.clean();b.clean=null;}const gm=b.el.querySelector('.gmsg');if(gm)gm.textContent='';}}
+  document.getElementById('hud').classList.toggle('on',t>0.05&&t<0.95);
+  document.getElementById('hint').style.opacity=(t>0.92||curBeat>=NB-2)?'0':'.45';
+  document.getElementById('prog').style.transform='scaleX('+t+')';
+  document.getElementById('cta').classList.toggle('on',t>0.3&&t<0.92);
+}
+// Eingabe -> ein Schritt pro Geste (Wheel gedrosselt, Touch-Swipe, Tastatur)
+let wlock=false;
+addEventListener('wheel',e=>{e.preventDefault();if(wlock||Math.abs(e.deltaY)<6)return;wlock=true;setTimeout(()=>{wlock=false;},480);goBeat(e.deltaY>0?1:-1);},{passive:false});
+let ty0=null;
+addEventListener('touchstart',e=>{ty0=e.touches[0].clientY;},{passive:true});
+addEventListener('touchmove',e=>{if(ty0!=null&&Math.abs(e.touches[0].clientY-ty0)>10)e.preventDefault();},{passive:false});
+addEventListener('touchend',e=>{if(ty0==null)return;const dy=e.changedTouches[0].clientY-ty0;ty0=null;if(Math.abs(dy)>40)goBeat(dy<0?1:-1);},{passive:true});
+addEventListener('keydown',e=>{if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();goBeat(1);}else if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();goBeat(-1);}});
+let frame=0;
+function animate(){requestAnimationFrame(animate);frame++;curT+=(tgtT-curT)*0.075;setCurveT(curT);updateBeats(curT);
+  const seg=Math.max(0,Math.min(1,curT));for(const l of lanes)l.geometry.setDrawRange(0,Math.floor(laneMax*seg));  // Linien enden direkt unter der Wolke (kein Versatz); die grosse Wolke darueber verdeckt das Ende
+  shadow.geometry.setDrawRange(0,Math.floor(shadowMax*seg));
+  const tw=1+Math.sin(frame*0.07)*0.05;tip.scale.setScalar(tw);tip.position.y=1.5+Math.sin(frame*0.05)*0.1;bergG.position.z=curve.getPointAt(Math.max(0,Math.min(0.999,curT))).z;
+  // langsam Nacht werden bis zum Sternenfeld
+  const nk=Math.min(1,curT*1.04);scene.background.copy(DAY).lerp(NIGHT,nk);scene.fog.color.copy(scene.background);
+  amb.intensity=0.85-nk*0.5;dl.intensity=0.8-nk*0.5;
+  if(curT>0.6){const sv=Math.min(1,(curT-0.6)/0.3);for(const s of STARS)s.scale.setScalar((0.5+sv*0.6)+Math.sin(frame*0.05+s.userData.ph)*0.25);}
+  for(const cl of CLOUDS){cl.position.x+=cl.userData.sp;if(cl.position.x>48)cl.position.x=-48;}
+  for(const pt of PETALS){pt.position.y+=Math.sin(frame*0.02+pt.userData.ph)*0.012;pt.position.x+=pt.userData.sx;pt.rotation.z+=0.03;}
+  // Welle/Popup erst, wenn die Wolke durchs Ziel gefahren ist (curT, nicht tgtT)
+  const wv=curT>0.965;if(wv!==waveOn){waveOn=wv;document.getElementById('wave').classList.toggle('on',wv);if(wv){konfBoom();konf();}}
+  rnd.render(scene,cam);}
+tgtT=BEATS[0].at;setCurveT(0);animate();
+addEventListener('resize',()=>{W=innerWidth;H=innerHeight;aspect=W/H;cam.left=-D*aspect;cam.right=D*aspect;cam.top=D;cam.bottom=-D;cam.updateProjectionMatrix();rnd.setSize(W,H);});
+
+// ===== Spiele (rendern in die Karte, geben Aufraeum-Funktion zurueck; bei Sieg blendet der Beat aus) =====
+function gameDone(beat){if(!beat)return;setTimeout(()=>{beat.won=true;if(beat.clean){beat.clean();beat.clean=null;}},1300);}
+// Tauschen – 2x2
+function gSwap(st,url,msg,beat){const N=2,n=N*N;let order=[...Array(n).keys()],sel=-1,done=false;
+  do{for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}}while(order.every((v,k)=>v===k));
+  st.innerHTML=`<div id="sw" style="display:grid;grid-template-columns:repeat(${N},1fr);gap:4px;aspect-ratio:1"></div><div class="ghint">${TT.h_swap}</div>`;
+  const sw=st.querySelector('#sw');
+  function R(){sw.innerHTML='';order.forEach((o,pos)=>{const col=o%N,row=Math.floor(o/N);const d=document.createElement('div');
+    d.style.cssText=`background-image:url('${url}');background-size:${N*100}% ${N*100}%;background-position:${col*100/(N-1)}% ${row*100/(N-1)}%;border-radius:8px;cursor:pointer;outline:${sel===pos?'4px solid #5856D6':'none'};outline-offset:-4px`;
+    d.onclick=()=>{if(done)return;if(sel<0)sel=pos;else if(sel===pos)sel=-1;else{[order[sel],order[pos]]=[order[pos],order[sel]];sel=-1;}R();
+      if(order.every((v,k)=>v===k)&&!done){done=true;msg.textContent=TT.win;konf();gameDone(beat);}};sw.appendChild(d);});}
+  R();return()=>{done=true;};}
+
+// Einsetzen – echtes Jigsaw (Nasen/Buchten), Teile ins richtige Feld ziehen
+let JPID=0;
+function jpEdges(n){const H=[],V=[];
+  for(let r=0;r<=n;r++){H[r]=[];for(let c=0;c<n;c++)H[r][c]=(r>0&&r<n)?(Math.random()<0.5?1:-1):0;}
+  for(let r=0;r<n;r++){V[r]=[];for(let c=0;c<=n;c++)V[r][c]=(c>0&&c<n)?(Math.random()<0.5?1:-1):0;}
+  const E=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)E[r*n+c]={t:r===0?0:-H[r][c],b:r===n-1?0:H[r+1][c],l:c===0?0:-V[r][c],r:c===n-1?0:V[r][c+1]};return E;}
+function jpPath(cell,m,ed){const a=m,b=m+cell,TL={x:a,y:a},TR={x:b,y:a},BR={x:b,y:b},BL={x:a,y:b};
+  function side(f,to,nx,ny,s){if(!s)return `L ${to.x} ${to.y}`;const dx=to.x-f.x,dy=to.y-f.y,p1={x:f.x+dx*.33,y:f.y+dy*.33},p2={x:f.x+dx*.67,y:f.y+dy*.67},bl=.34*cell*s,c1={x:p1.x+nx*bl,y:p1.y+ny*bl},c2={x:p2.x+nx*bl,y:p2.y+ny*bl};
+    return `L ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} C ${c1.x.toFixed(1)} ${c1.y.toFixed(1)} ${c2.x.toFixed(1)} ${c2.y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)} L ${to.x} ${to.y}`;}
+  return `M ${TL.x} ${TL.y} `+side(TL,TR,0,-1,ed.t)+' '+side(TR,BR,1,0,ed.r)+' '+side(BR,BL,0,1,ed.b)+' '+side(BL,TL,-1,0,ed.l)+' Z';}
+function gInsert(st,url,msg,beat){const n=2,cell=64,m=Math.round(cell*0.28),piece=cell+2*m,bs=cell*n,id=++JPID;st.style.width='100%';st.style.maxWidth='340px';
+  const E=jpEdges(n),homes={},paths={};
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const idx=r*n+c;paths[idx]=jpPath(cell,m,E[idx]);homes[idx]={left:c*cell-m,top:r*cell-m};}
+  function pieceSVG(idx){const r=Math.floor(idx/n),c=idx%n,bsz=cell*n,ix=(-c*cell+m).toFixed(1),iy=(-r*cell+m).toFixed(1);
+    return `<svg width="${piece}" height="${piece}" viewBox="0 0 ${piece} ${piece}"><defs><clipPath id="jc${id}_${idx}"><path d="${paths[idx]}"/></clipPath></defs>`
+      +`<g clip-path="url(#jc${id}_${idx})"><image href="${url}" x="${ix}" y="${iy}" width="${bsz}" height="${bsz}" preserveAspectRatio="xMidYMid slice"/></g>`
+      +`<path d="${paths[idx]}" fill="none" stroke="rgba(0,0,0,.32)" stroke-width="1.3"/></svg>`;}
+  let slots='';for(let idx=0;idx<n*n;idx++)slots+=`<svg class="jslot" style="position:absolute;left:${homes[idx].left}px;top:${homes[idx].top}px" width="${piece}" height="${piece}"><path d="${paths[idx]}" fill="rgba(0,0,0,.04)" stroke="rgba(0,0,0,.3)" stroke-width="1.4" stroke-dasharray="4 3"/></svg>`;
+  const queue=[...Array(n*n).keys()];for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
+  st.innerHTML=`<div id="jb" style="position:relative;width:${bs}px;height:${bs}px;margin:${m}px auto ${m+4}px">${slots}</div><div id="jt" style="display:flex;gap:10px;justify-content:center;align-items:center;min-height:${piece}px"></div><div class="ghint">${TT.h_insert}</div>`;
+  const jb=st.querySelector('#jb'),jt=st.querySelector('#jt');let placed=0,done=false;
+  function attachDrag(p){let drag=null;
+    p.addEventListener('pointerdown',e=>{if(done||p.dataset.set)return;e.preventDefault();const r=p.getBoundingClientRect();drag={dx:e.clientX-r.left,dy:e.clientY-r.top};
+      document.body.appendChild(p);p.style.position='fixed';p.style.margin='0';p.style.zIndex=9999;p.style.left=r.left+'px';p.style.top=r.top+'px';   // aus der transformierten Karte loesen
+      try{p.setPointerCapture(e.pointerId);}catch(_){}});
+    p.addEventListener('pointermove',e=>{if(!drag)return;p.style.left=(e.clientX-drag.dx)+'px';p.style.top=(e.clientY-drag.dy)+'px';});
+    p.addEventListener('pointerup',()=>{if(!drag)return;drag=null;const idx=+p.dataset.idx,h=homes[idx],br=jb.getBoundingClientRect(),pr=p.getBoundingClientRect();
+      if(Math.hypot(pr.left-(br.left+h.left),pr.top-(br.top+h.top))<cell*0.72){
+        p.dataset.set=1;jb.appendChild(p);p.style.position='absolute';p.style.margin='0';p.style.left=h.left+'px';p.style.top=h.top+'px';p.style.zIndex=1;
+        placed++;addPiece();if(placed===n*n&&!done){done=true;msg.textContent=TT.win;konf();gameDone(beat);}}
+      else{jt.appendChild(p);p.style.position='';p.style.margin='';p.style.left='';p.style.top='';p.style.zIndex='';}});}
+  function addPiece(){if(!queue.length)return;const idx=queue.shift();const d=document.createElement('div');d.className='jp-piece';d.dataset.idx=idx;d.style.width=piece+'px';d.style.height=piece+'px';d.innerHTML=pieceSVG(idx);jt.appendChild(d);attachDrag(d);}   // immer nur 2 Teile sichtbar; nach dem Platzieren das naechste einblenden
+  addPiece();addPiece();
+  return()=>{done=true;};}
+
+// Freikratzen
+function gScratch(st,url,msg,beat){st.innerHTML=`<canvas id="scv" width="300" height="300" style="width:100%;aspect-ratio:1;border-radius:10px;touch-action:none;display:block;background:url('${url}') center/cover"></canvas><div class="ghint">${TT.h_scratch}</div>`;
+  const cv=st.querySelector('#scv'),ctx=cv.getContext('2d');
+  ctx.fillStyle='#caa6e0';ctx.fillRect(0,0,300,300);for(let i=0;i<300;i+=24){ctx.fillStyle=i%48?'#b98fd6':'#caa6e0';ctx.fillRect(i,0,12,300);}
+  let down=false,done=false;const P=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*300/r.height];};
+  const scr=e=>{if(!down||done)return;e.preventDefault();const[x,y]=P(e);ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(x,y,30,0,7);ctx.fill();
+    const d=ctx.getImageData(0,0,300,300).data;let c=0,nn=0;for(let i=3;i<d.length;i+=400){nn++;if(d[i]<40)c++;}if(c/nn>0.5&&!done){done=true;msg.textContent=TT.win;konf();gameDone(beat);}};
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();down=true;scr(e);});cv.addEventListener('pointermove',scr,{passive:false});const up=()=>{down=false;};addEventListener('pointerup',up);
+  return()=>{done=true;removeEventListener('pointerup',up);};}
+
+// Auffangen
+function gCatch(st,url,msg,beat){st.innerHTML=`<div id="cf" style="position:relative;width:100%;aspect-ratio:1;background:linear-gradient(#bfe6ff,#dff3e0);border-radius:10px;overflow:hidden;touch-action:none"><div id="bk" style="position:absolute;bottom:3%;left:50%;width:46px;margin-left:-23px;font-size:2.2rem;text-align:center;pointer-events:none">🧺</div></div><div class="ghint"><b id="cc">0</b>/5 – ${TT.h_catch}</div>`;
+  const cf=st.querySelector('#cf'),bk=st.querySelector('#bk');let bx=50,caught=0,done=false,drops=[];
+  const mv=e=>{const r=cf.getBoundingClientRect();bx=Math.max(8,Math.min(92,(e.clientX-r.left)/r.width*100));bk.style.left=bx+'%';};
+  cf.addEventListener('pointermove',mv);cf.addEventListener('pointerdown',mv);
+  const iv=setInterval(()=>{if(done)return;const im=document.createElement('img');im.src=url;const x=8+Math.random()*84;im.style.cssText='position:absolute;width:30px;height:30px;object-fit:contain;top:-34px;left:'+x+'%';cf.appendChild(im);drops.push({el:im,y:-34,x});},850);
+  function loop(){if(done)return;requestAnimationFrame(loop);const h=cf.clientHeight;drops.forEach(o=>{if(!o.el)return;o.y+=h*0.013;o.el.style.top=o.y+'px';const yp=o.y/h*100;if(yp>78&&yp<97&&Math.abs(o.x-bx)<13){o.el.remove();o.el=null;caught++;st.querySelector('#cc').textContent=caught;if(caught>=5&&!done){done=true;msg.textContent=TT.win;konf();gameDone(beat);}}else if(o.y>h){o.el.remove();o.el=null;}});}
+  loop();return()=>{done=true;clearInterval(iv);};}
+
+const KCOLS=["#FF3B30","#FF9500","#FFC72C","#2ECF6E","#2D7CF6","#AF52DE","#FF3D77"];
+function konf(){for(let i=0;i<50;i++){const k=document.createElement('div');k.className='konf';k.style.left=Math.random()*100+'vw';k.style.background=KCOLS[i%7];k.style.animation=`fall ${1.4+Math.random()*1.2}s linear forwards`;k.style.animationDelay=Math.random()*.3+'s';document.body.appendChild(k);setTimeout(()=>k.remove(),3000);}}
+function konfBoom(){for(let i=0;i<130;i++){const k=document.createElement('div');k.className='konf';const ang=Math.random()*6.283,dist=18+Math.random()*62;
+  k.style.left='50vw';k.style.top='52vh';k.style.background=KCOLS[i%7];k.style.setProperty('--tx',(Math.cos(ang)*dist)+'vw');k.style.setProperty('--ty',(Math.sin(ang)*dist)+'vh');
+  k.style.animation=`boom ${1+Math.random()*0.9}s ease-out forwards`;document.body.appendChild(k);setTimeout(()=>k.remove(),2200);}}
+// Hintergrund-Musik aus der App (an/aus per Knopf; startet auf Klick wegen Autoplay-Regeln)
+const bgm=document.getElementById('bgm');bgm.volume=0.45;
+document.getElementById('snd').onclick=function(){if(bgm.paused){bgm.play().then(()=>{this.textContent='🔊';}).catch(()=>{});}else{bgm.pause();this.textContent='🔇';}};
+</script>
+</body>
+</html>
