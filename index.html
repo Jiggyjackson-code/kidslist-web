@@ -178,7 +178,8 @@
   .rt-win{min-height:1.3rem;margin-top:.5rem;font-weight:700;color:var(--gruen);opacity:0;transform:translateY(8px);transition:.4s;text-align:center;font-size:.95rem}
   .rt-win.show{opacity:1;transform:none}
   /* Spiele 2x2 mit Vorspiel */
-  .g4grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:.55rem 0 .35rem}
+  .g4grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin:.55rem 0 .35rem}   /* L3: 6 Spiele in 3x2 statt 2x3 -> gleiche Hoehe wie vorher bei 4 Spielen, das obere Banner ueberdeckt nicht mehr */
+  .g4lbl{font-size:.62rem;padding:.14rem}   /* L3: bei 3 Spalten schmalere Kacheln -> Label etwas kleiner */
   .g4tile{position:relative;cursor:pointer;border-radius:.9rem;overflow:hidden;border:3px solid #1B1B2F;box-shadow:0 4px 12px rgba(0,0,0,.18);background:#dfe3ec}
   .g4stage{position:relative;width:100%;aspect-ratio:1;filter:grayscale(1) brightness(.72);transition:filter .5s}
   .g4tile.solving .g4stage,.g4tile.solved .g4stage{filter:none}   /* Farbe kommt SOFORT beim Animationsstart (Gerit 2026-06-28) */
