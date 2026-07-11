@@ -182,7 +182,7 @@
   .g4lbl{font-size:.62rem;padding:.14rem}   /* L3: bei 3 Spalten schmalere Kacheln -> Label etwas kleiner */
   .g4tile{position:relative;cursor:pointer;border-radius:.9rem;overflow:hidden;border:3px solid #1B1B2F;box-shadow:0 4px 12px rgba(0,0,0,.18);background:#dfe3ec}
   .g4stage{position:relative;width:100%;aspect-ratio:1;filter:grayscale(1) brightness(.72);transition:filter .5s}
-  .g4tile.solving .g4stage,.g4tile.solved .g4stage{filter:none}   /* Farbe kommt SOFORT beim Animationsstart (Gerit 2026-06-28) */
+  .g4tile.solving .g4stage,.g4tile.solved .g4stage,.g4tile.unsolving .g4stage{filter:none}   /* Farbe kommt SOFORT beim Animationsstart (Gerit 2026-06-28); beim Rueckwaerts-Lauf bleibt sie bis zum Ende, dann weicher Grau-Fade */
   .g4pic{position:absolute;inset:0;background-size:cover;background-position:center}
   .g4lbl{position:absolute;left:0;right:0;bottom:0;background:rgba(27,27,47,.74);color:#fff;font-weight:700;font-size:.76rem;padding:.18rem;text-align:center}
   .g4check{position:absolute;top:.3rem;right:.3rem;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--gruen);color:#fff;display:grid;place-items:center;font-size:.9rem;transform:scale(0);transition:transform .35s cubic-bezier(.2,1.6,.4,1);z-index:4}
@@ -220,6 +220,16 @@
   .g4-scratch .g4scrhand{position:absolute;font-size:1.3rem;z-index:4;left:5%;top:28%;opacity:0;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   .g4tile.solving.g4-scratch .g4scrhand{animation:g4scrhand .94s ease-in-out .1s forwards}
   @keyframes g4scrhand{0%{opacity:0;left:5%;top:28%}12%{opacity:1}30%{left:52%;top:12%}50%{left:32%;top:58%}70%{left:74%;top:32%}88%{opacity:1;left:82%;top:64%}100%{opacity:0;left:96%;top:40%}}
+  /* RUECKWAERTS-LAUF (Ping-Pong-Loop, Gerit 2026-07-11): dieselben Animationen reverse --
+     jede Kachel "entloest" sich sichtbar, danach greift der Grau-Grundzustand */
+  .g4tile.unsolving.g4-swap .q0,.g4tile.unsolving.g4-swap .q3{animation:g4unswap .8s cubic-bezier(.5,0,.3,1) .1s reverse forwards}
+  .g4tile.unsolving.g4-rotate .g4q{animation:g4rot .8s cubic-bezier(.5,0,.3,1) .1s reverse forwards}
+  .g4tile.unsolving.g4-insert .g4jp.fly,.g4tile.unsolving.g4-mosaic .g4jp.fly{animation:g4jpfly .84s ease-in-out .14s reverse forwards}
+  .g4tile.unsolving.g4-scratch .g4cover{animation:g4scratch .94s ease-in-out .1s reverse forwards}
+  .g4tile.unsolving.g4-scratch .g4scrhand{animation:g4scrhand .94s ease-in-out .1s reverse forwards}
+  .g4tile.unsolving.g4-catch .g4drop.d1{animation:g4fall1 .94s ease-in .1s reverse forwards}
+  .g4tile.unsolving.g4-catch .g4drop.d2{animation:g4fall2 .94s ease-in .1s reverse forwards}
+  .g4tile.unsolving.g4-catch .g4basket{animation:g4basket .94s ease-in-out .1s reverse forwards}
   /* AUFFANGEN: ein Logo faellt von oben in den Korb */
   .g4-catch .g4sky{background:linear-gradient(#bfe6ff,#dff3e0)}
   .g4-catch .g4drop{position:absolute;width:20%;height:auto;z-index:2;opacity:0}
@@ -786,13 +796,22 @@ function fillGames4(){const g=document.getElementById('g4grid');if(!g)return;
     return `<div class="g4tile g4-${it.k}" data-k="${it.k}" onclick="openGame('${it.k}')"><div class="g4stage">${pre}</div><div class="g4lbl">${TT[it.label]}</div><div class="g4check">✓</div></div>`;}).join('');
 }
 let games4Run=false,g4Timers=[];
-function runGames4Seq(){if(games4Run)return;games4Run=true;
+function runGames4Seq(){if(games4Run)return;games4Run=true;g4Cycle();}
+// Endlos-Vorfuehrung als Ping-Pong (Gerit 2026-07-11): Spiel 1-6 loest sich vorwaerts,
+// kurze Ruhe, dann laufen die Animationen 1-6 RUECKWAERTS (Kacheln entloesen sich),
+// kurze Ruhe, dann beginnt der Loop neu -- kein harter Sprung zurueck in den Grau-Zustand.
+function g4Cycle(){
   const tiles=[...document.querySelectorAll('#g4grid .g4tile')];
-  tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.add('solving');
-    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},1200));},400+i*1300));});   // alle 6 Spiele in ~8s (Gerit 2026-07-11: ~4s war zu hektisch, ~12s zu traege); solving-Fenster 1200ms > Anim .1+.94s
+  if(!tiles.length){games4Run=false;return;}
+  tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.remove('unsolving');tl.classList.add('solving');
+    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},1200));},400+i*1300));});   // vorwaerts: alle 6 in ~8s (Gerit: ~4s zu hektisch, ~12s zu traege); solving-Fenster 1200ms > Anim .1+.94s
+  const tV=400+tiles.length*1300+1200;   // Ende vorwaerts + Ruhe: alle stehen kurz farbig
+  tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.remove('solved');tl.classList.add('unsolving');
+    g4Timers.push(setTimeout(()=>{tl.classList.remove('unsolving');},1200));},tV+i*1300));});   // rueckwaerts in derselben Reihenfolge 1-6, jede Animation reverse
+  g4Timers.push(setTimeout(g4Cycle, tV+tiles.length*1300+1400));   // Ruhe im Grau-Zustand, dann neuer Loop
 }
 function resetGames4(){games4Run=false;g4Timers.forEach(clearTimeout);g4Timers=[];
-  document.querySelectorAll('#g4grid .g4tile').forEach(t=>t.classList.remove('solving','solved'));}
+  document.querySelectorAll('#g4grid .g4tile').forEach(t=>t.classList.remove('solving','solved','unsolving'));}
 // Echtes Spiel im Vollbild-Overlay starten (nutzt die vorhandenen Spiel-Funktionen)
 let gmClean=null;
 function openGame(k){const ov=document.getElementById('gameModal'),st=ov.querySelector('.gmstage'),msg=ov.querySelector('.gmmsg');
@@ -810,12 +829,16 @@ setLang(L);
 // Snap-Navigation: ein Wisch/Scroll/Tastendruck = ein Punkt weiter (kein muehsames Endlos-Scrollen)
 document.body.style.overflow='hidden';
 if('scrollRestoration' in history)history.scrollRestoration='manual';scrollTo(0,0);
-let curT=0,tgtT=0,waveOn=false,curBeat=0,musikAuto=false;
+let curT=0,tgtT=0,waveOn=false,curBeat=0;
 const NB=BEATS.length,HALF=0.024;
 const GAMES={swap:gSwap,rotate:gRotate,insert:gInsert,mosaic:gMosaic,scratch:gScratch,catch:gCatch};
 function goBeat(dir){if(document.getElementById('gameModal').classList.contains('on'))return;const n=Math.max(0,Math.min(NB,curBeat+dir));if(n===curBeat)return;curBeat=n;tgtT=(curBeat>=NB)?1:BEATS[curBeat].at;
-  // Musik startet von allein nach dem letzten Comic (Beat 2 = Comic 2) -- direkt in der Wisch-Geste, sonst blockt der Autoplay-Schutz (Gerit 2026-06-28)
-  if(!musikAuto&&curBeat>2){musikAuto=true;playBgm();}}
+  // Musik lebt im FENSTER Beat 3..5 (Willkommen/Charaktere/Landschaft) -- danach faedet sie aus,
+  // statt ewig im Hintergrund zu laufen (Gerit 2026-07-11, Punkt 17). Start direkt in der
+  // Wisch-Geste (Autoplay-Schutz); ein manueller Ton-Knopf-Entscheid schlaegt die Automatik.
+  const imFenster = curBeat>2 && curBeat<=5;
+  if(imFenster){ if(!musikManuellAus && bgm.paused) playBgm(); }
+  else { if(!musikManuellAn && !bgm.paused) stopBgmSanft(); }}
 function updateBeats(t){
   BEATS.forEach(b=>{
     if(b.won){b.el.style.opacity='0';b.el.classList.remove('on');return;}
@@ -998,10 +1021,13 @@ function konfBoom(){for(let i=0;i<130;i++){const k=document.createElement('div')
 // Lautstaerke steckt in der Datei (musik.mp3 auf 10% exportiert). Kein Web Audio + KEIN stummes Vorab-Anspielen,
 // damit iOS den Stumm-Schalter respektiert: bei Stumm bleibt die Musik aus, nur bei Klingelton-an spielt sie. (Gerit 2026-06-28)
 const bgm=document.getElementById('bgm');bgm.volume=1;
+let musikManuellAus=false,musikManuellAn=false,bgmFade=null;   // Nutzer-Wille am Ton-Knopf schlaegt das Beat-Fenster (goBeat)
 const sndBtn=document.getElementById('snd');
 function setSnd(an){const im=sndBtn.querySelector('img');if(im)im.src=IMG+'ui/'+(an?'lautsprecher':'lautsprecher_aus')+'.webp';}
-function playBgm(){ bgm.play().then(()=>setSnd(true)).catch(()=>{}); }   // spielt in der Wisch-Geste; respektiert den Stumm-Schalter
-sndBtn.onclick=function(){ if(bgm.paused){playBgm();}else{bgm.pause();setSnd(false);} };
+function playBgm(){ clearInterval(bgmFade); bgmFade=null; bgm.volume=1; bgm.play().then(()=>setSnd(true)).catch(()=>{}); }   // spielt in der Wisch-Geste; respektiert den Stumm-Schalter
+function stopBgmSanft(){ if(bgm.paused) return; setSnd(false); clearInterval(bgmFade);   // kurzer Ausfade am PC; iOS ignoriert volume (Lehre #141) -> dort stoppt spaetestens das pause()
+  bgmFade=setInterval(()=>{ const v=Math.max(0,bgm.volume-0.12); bgm.volume=v; if(v<=0){ clearInterval(bgmFade); bgmFade=null; bgm.pause(); bgm.volume=1; } },80); }
+sndBtn.onclick=function(){ if(bgm.paused){musikManuellAn=true;musikManuellAus=false;playBgm();}else{musikManuellAus=true;musikManuellAn=false;bgm.pause();setSnd(false);} };
 
 // ===== Comic-Bild-Justierung (#fit) -- Autoren-Werkzeug, auf der normalen Seite inaktiv =====
 if(location.hash.toLowerCase().indexOf('fit')>=0){
