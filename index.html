@@ -156,10 +156,10 @@
   .hudblock:active{transform:scale(.97)}
   /* Landschafts-Sequenz */
   .lseq{position:relative;height:300px;aspect-ratio:500/1082;margin:.2rem auto .5rem;border-radius:1.1rem;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.25);border:5px solid #1B1B2F}
-  .lsphoto{position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;transition:opacity .25s ease}
+  .lsphoto{position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;transition:opacity .33s ease}
   .lsphoto.on{opacity:1}
   .lscap{font-weight:700;font-size:1.02rem;height:2.7rem;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;opacity:0;transform:translateX(-90px)}   /* feste Hoehe: kein Springen; Text scrollt langsam von links rein (Gerit) */
-  .lscap.in{animation:lcapin .5s cubic-bezier(.2,.6,.25,1) forwards}
+  .lscap.in{animation:lcapin .65s cubic-bezier(.2,.6,.25,1) forwards}
   @keyframes lcapin{from{opacity:0;transform:translateX(-90px)}to{opacity:1;transform:none}}
   /* Routine-Demo */
   .rtblock{transition:opacity .5s,filter .5s}
@@ -194,12 +194,12 @@
   .g4q.q0{background-position:0 0}.g4q.q1{background-position:100% 0}.g4q.q2{background-position:0 100%}.g4q.q3{background-position:100% 100%}
   .g4-swap .q0{transform:translate(calc(100% + 3px),calc(100% + 3px))}   /* startet auf Platz von q3 */
   .g4-swap .q3{transform:translate(calc(-100% - 3px),calc(-100% - 3px))}  /* startet auf Platz von q0 */
-  .g4tile.solving.g4-swap .q0,.g4tile.solving.g4-swap .q3{animation:g4unswap .4s cubic-bezier(.5,0,.3,1) .05s forwards}
+  .g4tile.solving.g4-swap .q0,.g4tile.solving.g4-swap .q3{animation:g4unswap .8s cubic-bezier(.5,0,.3,1) .1s forwards}
   .g4tile.solved.g4-swap .q0,.g4tile.solved.g4-swap .q3{transform:none}
   @keyframes g4unswap{to{transform:none}}
   /* DREHEN: jedes Teil startet verdreht und dreht sich gerade */
   .g4-rotate .q0{transform:rotate(-90deg)}.g4-rotate .q1{transform:rotate(90deg)}.g4-rotate .q2{transform:rotate(180deg)}.g4-rotate .q3{transform:rotate(-90deg)}
-  .g4tile.solving.g4-rotate .g4q{animation:g4rot .4s cubic-bezier(.5,0,.3,1) .05s forwards}
+  .g4tile.solving.g4-rotate .g4q{animation:g4rot .8s cubic-bezier(.5,0,.3,1) .1s forwards}
   .g4tile.solved.g4-rotate .g4q{transform:none}
   @keyframes g4rot{to{transform:rotate(0deg)}}
   /* MOSAIK nutzt jetzt die Einsetz-Animation (g4-insert), keine eigene Kachel-Skalierung mehr (Gerit L1) */
@@ -209,28 +209,28 @@
   .g4jp,.g4jpslot{position:absolute}
   .g4jp{z-index:2}
   .g4-insert .g4jp.fly,.g4-mosaic .g4jp.fly{opacity:0;transform:translate(45%,-150%) rotate(14deg);z-index:3}   /* 3 Teile liegen, das 4. fliegt rein */
-  .g4tile.solving.g4-insert .g4jp.fly,.g4tile.solving.g4-mosaic .g4jp.fly{animation:g4jpfly .42s ease-in-out .07s forwards}
+  .g4tile.solving.g4-insert .g4jp.fly,.g4tile.solving.g4-mosaic .g4jp.fly{animation:g4jpfly .84s ease-in-out .14s forwards}
   .g4tile.solved.g4-insert .g4jp.fly,.g4tile.solved.g4-mosaic .g4jp.fly{opacity:1;transform:none}
   @keyframes g4jpfly{0%{opacity:0;transform:translate(45%,-150%) rotate(14deg)}35%{opacity:1}100%{opacity:1;transform:none}}
   /* FREIKRATZEN: unsere lila Kratzschicht wird weggewischt */
   .g4-scratch .g4cover{position:absolute;inset:0;background:repeating-linear-gradient(50deg,#caa6e0,#caa6e0 10px,#b98fd6 10px,#b98fd6 20px)}
-  .g4tile.solving.g4-scratch .g4cover{animation:g4scratch .47s ease-in-out .05s forwards}
+  .g4tile.solving.g4-scratch .g4cover{animation:g4scratch .94s ease-in-out .1s forwards}
   .g4tile.solved.g4-scratch .g4cover{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}
   @keyframes g4scratch{0%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}20%{clip-path:polygon(28% 0,100% 0,100% 100%,8% 100%)}40%{clip-path:polygon(22% 0,100% 0,100% 100%,46% 100%)}60%{clip-path:polygon(58% 0,100% 0,100% 100%,38% 100%)}80%{clip-path:polygon(72% 0,100% 0,100% 100%,86% 100%)}100%{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}}
   .g4-scratch .g4scrhand{position:absolute;font-size:1.3rem;z-index:4;left:5%;top:28%;opacity:0;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
-  .g4tile.solving.g4-scratch .g4scrhand{animation:g4scrhand .47s ease-in-out .05s forwards}
+  .g4tile.solving.g4-scratch .g4scrhand{animation:g4scrhand .94s ease-in-out .1s forwards}
   @keyframes g4scrhand{0%{opacity:0;left:5%;top:28%}12%{opacity:1}30%{left:52%;top:12%}50%{left:32%;top:58%}70%{left:74%;top:32%}88%{opacity:1;left:82%;top:64%}100%{opacity:0;left:96%;top:40%}}
   /* AUFFANGEN: ein Logo faellt von oben in den Korb */
   .g4-catch .g4sky{background:linear-gradient(#bfe6ff,#dff3e0)}
   .g4-catch .g4drop{position:absolute;width:20%;height:auto;z-index:2;opacity:0}
   .g4-catch .g4drop.d1{left:24%;top:-28%}
   .g4-catch .g4drop.d2{left:56%;top:-28%}
-  .g4tile.solving.g4-catch .g4drop.d1{animation:g4fall1 .47s ease-in .05s forwards}   /* erster Stern */
-  .g4tile.solving.g4-catch .g4drop.d2{animation:g4fall2 .47s ease-in .05s forwards}   /* weiterer Stern */
+  .g4tile.solving.g4-catch .g4drop.d1{animation:g4fall1 .94s ease-in .1s forwards}   /* erster Stern */
+  .g4tile.solving.g4-catch .g4drop.d2{animation:g4fall2 .94s ease-in .1s forwards}   /* weiterer Stern */
   @keyframes g4fall1{0%{opacity:1;top:-28%}40%{top:55%}46%,100%{opacity:0;top:55%}}
   @keyframes g4fall2{0%,42%{opacity:0;top:-28%}46%{opacity:1}88%{top:55%}94%,100%{opacity:0;top:55%}}
   .g4-catch .g4basket{position:absolute;bottom:5%;font-size:1.9rem;z-index:3;left:22%}
-  .g4tile.solving.g4-catch .g4basket{animation:g4basket .47s ease-in-out .05s forwards}   /* Korb wandert vom ersten zum zweiten Stern */
+  .g4tile.solving.g4-catch .g4basket{animation:g4basket .94s ease-in-out .1s forwards}   /* Korb wandert vom ersten zum zweiten Stern */
   .g4tile.solved.g4-catch .g4basket{left:54%}
   @keyframes g4basket{0%,38%{left:22%}54%,100%{left:54%}}
   /* Feature-Leiste (Variante C): Kaertchen ziehen automatisch durch */
@@ -733,7 +733,7 @@ function runLandSeq(){if(landSeqRun)return;landSeqRun=true;
   const ph=[...document.querySelectorAll('#lseq .lsphoto')],cap=document.getElementById('lscap');if(!ph.length)return;
   const steps=()=>[TT.ls1,TT.ls2,TT.ls3,TT.ls4];
   const show=i=>{ph.forEach((p,k)=>p.classList.toggle('on',k===i));cap.classList.remove('in');void cap.offsetWidth;cap.textContent=steps()[i];cap.classList.add('in');};
-  show(0);[1,2,3].forEach(i=>landTimers.push(setTimeout(()=>show(i),i*1000)));   // je 1,0s = doppelt so schnell (Gerit 2026-07-11: die meisten swipen weg, bevor sie die Veraenderung sehen); Blende .25s + Text-Einflug .5s passen in den Takt
+  show(0);[1,2,3].forEach(i=>landTimers.push(setTimeout(()=>show(i),i*1300)));   // je 1,3s (Gerit 2026-07-11: erst auf 1,0s halbiert, dann 30% zurueck -- 2,0s war zu traege, 1,0s zu hektisch); Blende .33s + Einflug .65s passen in den Takt
 }
 function resetLandSeq(){landSeqRun=false;landTimers.forEach(clearTimeout);landTimers=[];
   document.querySelectorAll('#lseq .lsphoto').forEach((p,k)=>p.classList.toggle('on',k===0));
@@ -789,7 +789,7 @@ let games4Run=false,g4Timers=[];
 function runGames4Seq(){if(games4Run)return;games4Run=true;
   const tiles=[...document.querySelectorAll('#g4grid .g4tile')];
   tiles.forEach((tl,i)=>{g4Timers.push(setTimeout(()=>{tl.classList.add('solving');
-    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},600));},200+i*650));});   // 3x so schnell (Gerit 2026-07-11): alle 6 Spiele in ~4s statt ~12s; solving-Fenster 600ms > Anim .05+.47s
+    g4Timers.push(setTimeout(()=>{tl.classList.remove('solving');tl.classList.add('solved');},1200));},400+i*1300));});   // alle 6 Spiele in ~8s (Gerit 2026-07-11: ~4s war zu hektisch, ~12s zu traege); solving-Fenster 1200ms > Anim .1+.94s
 }
 function resetGames4(){games4Run=false;g4Timers.forEach(clearTimeout);g4Timers=[];
   document.querySelectorAll('#g4grid .g4tile').forEach(t=>t.classList.remove('solving','solved'));}
